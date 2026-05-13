@@ -38,7 +38,7 @@ export function Sidebar({ onArticleClick }: SidebarProps) {
             <div className={s.accents} />
             <div className={s.accentGlow} />
             <div className={s.bannerContent}>
-              <img className={s.bannerLogo} src="/logo-navigator.png" alt="Навигатор" />
+              <img className={s.bannerLogo} src="/logo-navigator.webp" alt="Навигатор" />
               <p className={s.bannerHeading}>
                 Навигатор по&nbsp;технологическим решениям для&nbsp;работы с&nbsp;долговыми обязательствами
               </p>

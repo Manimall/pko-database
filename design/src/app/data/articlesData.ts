@@ -25,7 +25,7 @@ export const articles: Article[] = [
     id: 'moscow-vs-regions',
     title: 'Москва vs регионы: кто доминирует в рейтинге ПКО-300 по итогам 2025 года',
     shortTitle: 'Москва vs регионы в ПКО-300 2025',
-    image: '/images/article-1.jpg',
+    image: '/images/article-1.webp',
     date: '15 апреля 2026',
     summary: 'Москва по-прежнему лидирует, но регионы наращивают присутствие — 132 компании из 300 зарегистрированы за пределами столицы.',
     sections: [
@@ -88,7 +88,7 @@ export const articles: Article[] = [
     id: 'fastest-growing',
     title: 'Самые быстрорастущие ПКО за пять лет: рекордные темпы роста 2025',
     shortTitle: 'Самые быстрорастущие ПКО за пять лет',
-    image: '/images/article-2.jpg',
+    image: '/images/article-2.webp',
     date: '15 апреля 2026',
     summary: 'ТОП-10 ПКО с максимальным CAGR за 2021–2025 — все с прибылью каждый год. Лидер показал рост 10 718 %.',
     sections: [
@@ -148,7 +148,7 @@ export const articles: Article[] = [
     id: 'financial-assets',
     title: 'Лидеры по росту финансовых активов за 3 года: топ-10 ПКО по приросту финансовых вложений в 2025 году',
     shortTitle: 'Лидеры по росту финансовых активов за 3 года',
-    image: '/images/article-3.jpg',
+    image: '/images/article-3.webp',
     date: '15 апреля 2026',
     summary: 'Какие ПКО активнее всего наращивают финансовые вложения — топ-10 по приросту активов за 2023–2025.',
     sections: [

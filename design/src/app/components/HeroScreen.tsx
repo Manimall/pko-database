@@ -33,7 +33,7 @@ export function HeroScreen({
       <div className={s.bgImageBox}>
         <img
           className={s.bgImage}
-          src="/images/hero-architecture.jpg"
+          src="/images/hero-architecture.webp"
           alt=""
           decoding="async"
           fetchPriority="high"

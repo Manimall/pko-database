@@ -32,7 +32,7 @@ export function SiteHeader({
     <header className={s.header}>
       <div className={s.brandSide}>
         <div className={s.logoBox}>
-          <img src="/logo-rvdp.png" alt="Рынок Взыскания и Debt Price" />
+          <img src="/logo-rvdp.webp" alt="Рынок Взыскания и Debt Price" />
           <a className={s.logoBoxHalf} style={{ left: 0 }} href="https://debtprice.market/" target="_blank" rel="noopener noreferrer" title="Debt Price" />
           <a className={s.logoBoxHalf} style={{ right: 0 }} href="https://rvzrus.ru/"        target="_blank" rel="noopener noreferrer" title="Рынок Взыскания" />
         </div>
@@ -45,7 +45,7 @@ export function SiteHeader({
 
         {isMobile && (
           <a className={s.navigatorLink} href="https://navigator.debt-tech.ru/" target="_blank" rel="noopener noreferrer">
-            <img src="/logo-navigator.png" alt="Навигатор" />
+            <img src="/logo-navigator.webp" alt="Навигатор" />
           </a>
         )}
       </div>
@@ -54,7 +54,7 @@ export function SiteHeader({
 
       {!isMobile && (
         <a className={s.navigatorLink} href="https://navigator.debt-tech.ru/" target="_blank" rel="noopener noreferrer">
-          <img src="/logo-navigator.png" alt="Навигатор" />
+          <img src="/logo-navigator.webp" alt="Навигатор" />
         </a>
       )}
     </header>
