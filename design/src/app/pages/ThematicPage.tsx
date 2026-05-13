@@ -1,10 +1,15 @@
-import { articles } from '../data/articlesData';
 import { ArticleCard } from '../components/ArticleCard';
+import { URLS, loadArticles } from '../data/loader';
+import { useAsyncData } from '../data/useAsyncData';
+import type { Article } from '../data/articlesData';
 import { PageLayout } from './PageLayout';
 import type { Router } from '../routing';
 import s from './ThematicPage.module.css';
 
 export function ThematicPage({ router }: { router: Router }) {
+  const { data } = useAsyncData<Article[]>(URLS.articles, loadArticles);
+  const articles = data ?? [];
+
   return (
     <PageLayout
       activeTab="thematic"

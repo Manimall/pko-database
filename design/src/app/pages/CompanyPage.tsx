@@ -1,11 +1,13 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { ratingData } from '../data/ratingData';
+import { lazy, Suspense } from 'react';
+import type { RatingCompany } from '../data/ratingData';
+import type { CompanyDetails } from '../data/companyDetails';
+import { URLS, loadRatingData, loadCompanyDetails } from '../data/loader';
+import { useAsyncData } from '../data/useAsyncData';
 import { PageLayout } from './PageLayout';
 import type { Router } from '../routing';
-import type { CompanyDetails } from '../data/companyDetails';
 
-// Code-split: CompanyCard + companyDetails + financeDynamic pull a separate chunk
-// (~55 KB gzip) that loads only when the user actually opens a company card.
+// Code-split: CompanyCard pulls a separate JS chunk only on first open.
+// Company-details JSON (~124 KB gzip) is also loaded on demand here.
 const CompanyCard = lazy(() =>
   import('../components/companyCard').then(m => ({ default: m.CompanyCard }))
 );
@@ -18,19 +20,18 @@ interface CompanyPageProps {
 }
 
 export function CompanyPage({ inn, router, renderUnknown }: CompanyPageProps) {
-  const comp = ratingData.find(c => c.inn === inn);
-  const [details, setDetails] = useState<CompanyDetails | null | undefined>(undefined);
+  const { data: companies } = useAsyncData<RatingCompany[]>(URLS.rating, loadRatingData);
+  const { data: detailsMap, loading: detailsLoading } =
+    useAsyncData<Record<string, CompanyDetails>>(URLS.companyDetails, loadCompanyDetails);
 
-  useEffect(() => {
-    let cancelled = false;
-    import('../data/companyDetails').then(m => {
-      if (!cancelled) setDetails(m.companyDetailsMap[inn] ?? null);
-    });
-    return () => { cancelled = true; };
-  }, [inn]);
+  // Wait for rating data before deciding the INN is unknown — otherwise we'd flash the rating page.
+  if (!companies) return null;
+  const company = companies.find(c => c.inn === inn);
+  if (!company) return renderUnknown();
 
-  if (!comp) return renderUnknown();
-  if (details === null) return renderUnknown();
+  if (detailsLoading) return null;
+  const details = detailsMap?.[inn];
+  if (!details) return renderUnknown();
 
   return (
     <PageLayout
@@ -39,9 +40,7 @@ export function CompanyPage({ inn, router, renderUnknown }: CompanyPageProps) {
       onNavigateToThematic={router.goThematic}
     >
       <Suspense fallback={null}>
-        {details && (
-          <CompanyCard company={comp} details={details} onBack={router.goRating} />
-        )}
+        <CompanyCard company={company} details={details} onBack={router.goRating} />
       </Suspense>
     </PageLayout>
   );

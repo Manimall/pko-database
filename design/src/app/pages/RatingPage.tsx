@@ -12,34 +12,41 @@ import { InvestmentTable } from '../components/investmentTable';
 import { Sidebar } from '../components/Sidebar';
 import { Footer } from '../components/Footer';
 import { CompareFloatingBar } from '../components/CompareFloatingBar';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
+import { URLS, loadRatingData } from '../data/loader';
+import { useAsyncData } from '../data/useAsyncData';
+import type { RatingCompany } from '../data/ratingData';
+import type { Router } from '../routing';
 import { applyFilters, buildExtraColumns } from './ratingFilters';
+import s from './RatingPage.module.css';
 
 // Compare modal only mounts when user clicks "Сравнить" — code-split it.
 const CompareModal = lazy(() =>
   import('../components/CompareModal').then(m => ({ default: m.CompareModal }))
 );
-import { useIsMobile } from '../shared/hooks/useIsMobile';
-import { ratingData } from '../data/ratingData';
-import type { Router } from '../routing';
-import s from './RatingPage.module.css';
+
+const MAX_COMPARE = 5;
 
 export function RatingPage({ router }: { router: Router }) {
   const isMobile = useIsMobile();
+  const { data: ratingData, loading } = useAsyncData<RatingCompany[]>(URLS.rating, loadRatingData);
+  const rows = ratingData ?? [];
+
   const [preset, setPreset] = useState<Preset>('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [ratingFilters, setRatingFilters] = useState<RatingFilters>(EMPTY_FILTERS);
-
   const [compareMode, setCompareMode] = useState(false);
   const [selectedInns, setSelectedInns] = useState<Set<string>>(new Set());
   const [showCompareModal, setShowCompareModal] = useState(false);
 
   const ratingCompanies = useMemo(
-    () => applyFilters(ratingData, searchQuery, ratingFilters),
-    [searchQuery, ratingFilters]
+    () => applyFilters(rows, searchQuery, ratingFilters),
+    [rows, searchQuery, ratingFilters]
   );
   const extraColumns = useMemo(() => buildExtraColumns(ratingFilters), [ratingFilters]);
 
   const showSidebar = preset === 'overview';
+  const selectedCompanies = rows.filter(c => selectedInns.has(c.inn));
 
   const toggleCompare = () => {
     if (compareMode) {
@@ -54,7 +61,7 @@ export function RatingPage({ router }: { router: Router }) {
     setSelectedInns(prev => {
       const next = new Set(prev);
       if (next.has(inn)) next.delete(inn);
-      else if (next.size < 5) next.add(inn);
+      else if (next.size < MAX_COMPARE) next.add(inn);
       return next;
     });
   };
@@ -86,19 +93,15 @@ export function RatingPage({ router }: { router: Router }) {
             />
 
             {preset === 'overview' ? (
-              ratingCompanies.length === 0 ? (
-                <div className={s.empty}>По вашему запросу ничего не найдено</div>
-              ) : (
-                <RatingTable
-                  companies={ratingCompanies}
-                  onCompanyClick={router.goCompany}
-                  compareMode={compareMode}
-                  selectedInns={selectedInns}
-                  onToggleSelect={toggleSelected}
-                  maxSelected={5}
-                  extraColumns={extraColumns}
-                />
-              )
+              <RatingBody
+                loading={loading}
+                companies={ratingCompanies}
+                router={router}
+                compareMode={compareMode}
+                selectedInns={selectedInns}
+                toggleSelected={toggleSelected}
+                extraColumns={extraColumns}
+              />
             ) : (
               <InvestmentTable onCompanyClick={router.goCompany} />
             )}
@@ -126,9 +129,9 @@ export function RatingPage({ router }: { router: Router }) {
 
       <Footer />
 
-      {compareMode && selectedInns.size > 0 && (
+      {compareMode && selectedCompanies.length > 0 && (
         <CompareFloatingBar
-          selectedCompanies={ratingData.filter(c => selectedInns.has(c.inn))}
+          selectedCompanies={selectedCompanies}
           onRemove={inn => setSelectedInns(prev => {
             const next = new Set(prev);
             next.delete(inn);
@@ -145,11 +148,39 @@ export function RatingPage({ router }: { router: Router }) {
       {showCompareModal && (
         <Suspense fallback={null}>
           <CompareModal
-            companies={ratingData.filter(c => selectedInns.has(c.inn))}
+            companies={selectedCompanies}
             onClose={() => setShowCompareModal(false)}
           />
         </Suspense>
       )}
     </div>
+  );
+}
+
+interface RatingBodyProps {
+  loading: boolean;
+  companies: RatingCompany[];
+  router: Router;
+  compareMode: boolean;
+  selectedInns: Set<string>;
+  toggleSelected: (inn: string) => void;
+  extraColumns: ReturnType<typeof buildExtraColumns>;
+}
+
+function RatingBody({
+  loading, companies, router, compareMode, selectedInns, toggleSelected, extraColumns,
+}: RatingBodyProps) {
+  if (loading)              return <div className={s.empty}>Загрузка…</div>;
+  if (companies.length === 0) return <div className={s.empty}>По вашему запросу ничего не найдено</div>;
+  return (
+    <RatingTable
+      companies={companies}
+      onCompanyClick={router.goCompany}
+      compareMode={compareMode}
+      selectedInns={selectedInns}
+      onToggleSelect={toggleSelected}
+      maxSelected={MAX_COMPARE}
+      extraColumns={extraColumns}
+    />
   );
 }

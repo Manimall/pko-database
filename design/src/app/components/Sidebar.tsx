@@ -1,5 +1,7 @@
 import { ArrowRight } from 'lucide-react';
-import { articles } from '../data/articlesData';
+import { URLS, loadArticles } from '../data/loader';
+import { useAsyncData } from '../data/useAsyncData';
+import type { Article } from '../data/articlesData';
 import s from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -7,6 +9,9 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onArticleClick }: SidebarProps) {
+  const { data } = useAsyncData<Article[]>(URLS.articles, loadArticles);
+  const articles = data ?? [];
+
   return (
     <div className={s.root}>
       <div className={s.sectionHeader}>

@@ -1,5 +1,7 @@
 import { ArrowLeft, ArrowRight, Calendar } from 'lucide-react';
-import { articles, ArticleSection } from '../data/articlesData';
+import { URLS, loadArticles } from '../data/loader';
+import { useAsyncData } from '../data/useAsyncData';
+import type { Article, ArticleSection } from '../data/articlesData';
 import s from './ArticleContent.module.css';
 
 function SectionRenderer({ section }: { section: ArticleSection }) {
@@ -50,11 +52,12 @@ interface ArticleContentProps {
 }
 
 export function ArticleContent({ articleId, onBack, onArticleClick }: ArticleContentProps) {
+  const { data, loading } = useAsyncData<Article[]>(URLS.articles, loadArticles);
+  const articles = data ?? [];
   const article = articles.find(a => a.id === articleId);
 
-  if (!article) {
-    return <div className={s.notFound}>Статья не найдена</div>;
-  }
+  if (loading) return null;
+  if (!article) return <div className={s.notFound}>Статья не найдена</div>;
 
   const otherArticles = articles.filter(a => a.id !== articleId);
 

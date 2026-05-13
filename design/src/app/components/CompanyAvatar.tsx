@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { logoMap } from '../data/logoMap';
+import { URLS, loadLogoMap } from '../data/loader';
+import { useAsyncData } from '../data/useAsyncData';
+import type { LogoMap } from '../data/logoMap';
 import s from './CompanyAvatar.module.css';
 
 const AVATAR_COLORS = [
@@ -18,9 +20,10 @@ interface CompanyAvatarProps {
 
 /** Logo-or-letter avatar. Single source for RatingTable, CompareModal, CompareFloatingBar. */
 export function CompanyAvatar({ name, rank, inn, size = 32 }: CompanyAvatarProps) {
-  const logoFile = logoMap[inn];
+  const { data } = useAsyncData<LogoMap>(URLS.logoMap, loadLogoMap);
   const [imgError, setImgError] = useState(false);
   const sizeCls = sizeClass[size];
+  const logoFile = data?.[inn];
 
   if (logoFile && !imgError) {
     return (

@@ -1,11 +1,7 @@
-import { ratingData } from '../../data/ratingData';
-
-const rankByName = new Map<string, number>();
-const innByName = new Map<string, string>();
-for (const c of ratingData) {
-  if (!rankByName.has(c.name)) rankByName.set(c.name, c.rank);
-  if (!innByName.has(c.name)) innByName.set(c.name, c.inn);
-}
+import { useMemo } from 'react';
+import { URLS, loadRatingData } from '../../data/loader';
+import { useAsyncData } from '../../data/useAsyncData';
+import type { RatingCompany } from '../../data/ratingData';
 
 const ALIASES: Record<string, string> = {
   'НФИ': 'Национальная Фабрика Ипотеки',
@@ -21,26 +17,53 @@ const ALIASES: Record<string, string> = {
   'Кредитор': 'ООО "ПКО "КРЕДИТОР"',
 };
 
-function resolveCompanyName(companyName: string): string | null {
-  if (rankByName.has(companyName)) return companyName;
-  const alias = ALIASES[companyName];
-  if (alias && rankByName.has(alias)) return alias;
-  const lower = companyName.toLowerCase();
-  const aliasLower = alias?.toLowerCase();
-  for (const [name] of rankByName) {
-    const nameLower = name.toLowerCase();
-    if (nameLower.includes(lower) || lower.includes(nameLower)) return name;
-    if (aliasLower && (nameLower.includes(aliasLower) || aliasLower.includes(nameLower))) return name;
+export interface InvestmentResolver {
+  getPkoRank: (companyName: string) => number | null;
+  getPkoInn:  (companyName: string) => string | null;
+}
+
+/**
+ * Pure factory: builds name → rank / name → ИНН lookups with alias resolution
+ * and fuzzy fallback. Easy to unit-test in isolation from React/loaders.
+ */
+export function createInvestmentResolver(rows: readonly RatingCompany[]): InvestmentResolver {
+  const rankByName = new Map<string, number>();
+  const innByName  = new Map<string, string>();
+  for (const c of rows) {
+    if (!rankByName.has(c.name)) rankByName.set(c.name, c.rank);
+    if (!innByName.has(c.name))  innByName.set(c.name, c.inn);
   }
-  return null;
+
+  function resolve(companyName: string): string | null {
+    if (rankByName.has(companyName)) return companyName;
+    const alias = ALIASES[companyName];
+    if (alias && rankByName.has(alias)) return alias;
+    const lower = companyName.toLowerCase();
+    const aliasLower = alias?.toLowerCase();
+    for (const [name] of rankByName) {
+      const nameLower = name.toLowerCase();
+      if (nameLower.includes(lower) || lower.includes(nameLower)) return name;
+      if (aliasLower && (nameLower.includes(aliasLower) || aliasLower.includes(nameLower))) return name;
+    }
+    return null;
+  }
+
+  return {
+    getPkoRank: name => {
+      const resolved = resolve(name);
+      return resolved ? rankByName.get(resolved)! : null;
+    },
+    getPkoInn: name => {
+      const resolved = resolve(name);
+      return resolved ? innByName.get(resolved) ?? null : null;
+    },
+  };
 }
 
-export function getPkoRank(companyName: string): number | null {
-  const resolved = resolveCompanyName(companyName);
-  return resolved ? rankByName.get(resolved)! : null;
-}
+const EMPTY_RESOLVER: InvestmentResolver = createInvestmentResolver([]);
 
-export function getPkoInn(companyName: string): string | null {
-  const resolved = resolveCompanyName(companyName);
-  return resolved ? innByName.get(resolved) ?? null : null;
+/** React hook: loads ratingData and memoises the resolver. */
+export function useInvestmentResolver(): InvestmentResolver {
+  const { data } = useAsyncData<RatingCompany[]>(URLS.rating, loadRatingData);
+  return useMemo(() => data ? createInvestmentResolver(data) : EMPTY_RESOLVER, [data]);
 }

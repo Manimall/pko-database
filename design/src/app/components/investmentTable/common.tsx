@@ -2,7 +2,7 @@ import { type CSSProperties } from 'react';
 import { useIsMobile } from '../../shared/hooks/useIsMobile';
 import { stripOrgForm } from '../../utils/formatCompanyName';
 import { CompanyAvatar } from '../CompanyAvatar';
-import { getPkoRank, getPkoInn } from './helpers';
+import type { InvestmentResolver } from './helpers';
 import s from './InvestmentTable.module.css';
 
 export interface StickyCols {
@@ -23,9 +23,9 @@ export function useMobileSticky(): StickyCols {
   };
 }
 
-export function NamedAvatar({ name }: { name: string }) {
-  const inn = getPkoInn(name);
-  const rank = getPkoRank(name) ?? 0;
+export function NamedAvatar({ name, resolver }: { name: string; resolver: InvestmentResolver }) {
+  const inn = resolver.getPkoInn(name);
+  const rank = resolver.getPkoRank(name) ?? 0;
   return (
     <CompanyAvatar
       name={stripOrgForm(name)}

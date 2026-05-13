@@ -1,7 +1,9 @@
 import { ArrowLeft } from 'lucide-react';
 import type { RatingCompany } from '../../data/ratingData';
 import type { CompanyDetails } from '../../data/companyDetails';
-import { logoMap } from '../../data/logoMap';
+import type { LogoMap } from '../../data/logoMap';
+import { URLS, loadLogoMap } from '../../data/loader';
+import { useAsyncData } from '../../data/useAsyncData';
 import { HeaderSection } from './HeaderSection';
 import { FinancialsSection } from './FinancialsSection';
 import { CapitalStructureSection } from './CapitalStructureSection';
@@ -16,7 +18,8 @@ interface CompanyCardProps {
 }
 
 export function CompanyCard({ company, details, onBack }: CompanyCardProps) {
-  const logoFile = logoMap[company.inn];
+  const { data: logoMap } = useAsyncData<LogoMap>(URLS.logoMap, loadLogoMap);
+  const logoFile = logoMap?.[company.inn];
 
   return (
     <div className={s.root}>

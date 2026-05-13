@@ -1,8 +1,10 @@
 import { type CSSProperties, type ReactNode, useState } from 'react';
 import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
-import { bonds, type Bond } from '../../data/investmentData';
+import type { Bond } from '../../data/investmentData';
+import { URLS, loadInvestmentBonds } from '../../data/loader';
+import { useAsyncData } from '../../data/useAsyncData';
 import { stripOrgForm } from '../../utils/formatCompanyName';
-import { getPkoRank, getPkoInn } from './helpers';
+import { useInvestmentResolver, type InvestmentResolver } from './helpers';
 import { useMobileSticky, NamedAvatar, rowClassName } from './common';
 import { StatusBadge, RatingBadge } from './badges';
 import s from './InvestmentTable.module.css';
@@ -13,11 +15,16 @@ interface BondsTableProps {
   onCompanyClick?: (inn: string) => void;
 }
 
-function sortBonds(rows: Bond[], key: SortKey, dir: 'asc' | 'desc'): Bond[] {
+function sortBonds(
+  rows: Bond[],
+  key: SortKey,
+  dir: 'asc' | 'desc',
+  resolver: InvestmentResolver,
+): Bond[] {
   const mul = dir === 'asc' ? 1 : -1;
   return [...rows].sort((a, b) => {
     if (key === 'pkoRank') {
-      return ((getPkoRank(a.company) ?? 999) - (getPkoRank(b.company) ?? 999)) * mul;
+      return ((resolver.getPkoRank(a.company) ?? 999) - (resolver.getPkoRank(b.company) ?? 999)) * mul;
     }
     if (key === 'volume') {
       return ((a.volume ?? -1) - (b.volume ?? -1)) * mul;
@@ -55,6 +62,8 @@ function SortableTh({ sortKey, currentKey, dir, onSort, children, style }: Sorta
 
 export function BondsTable({ onCompanyClick }: BondsTableProps) {
   const sticky = useMobileSticky();
+  const resolver = useInvestmentResolver();
+  const { data } = useAsyncData<Bond[]>(URLS.investmentBonds, loadInvestmentBonds);
   const [sortKey, setSortKey] = useState<SortKey>('pkoRank');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
@@ -63,7 +72,7 @@ export function BondsTable({ onCompanyClick }: BondsTableProps) {
     else { setSortKey(k); setSortDir('asc'); }
   };
 
-  const sorted = sortBonds(bonds, sortKey, sortDir);
+  const sorted = sortBonds(data ?? [], sortKey, sortDir, resolver);
   const thProps = (k: SortKey) => ({ sortKey: k, currentKey: sortKey, dir: sortDir, onSort: handleSort });
 
   return (
@@ -85,7 +94,7 @@ export function BondsTable({ onCompanyClick }: BondsTableProps) {
       </thead>
       <tbody>
         {sorted.map((b, idx) => {
-          const inn = getPkoInn(b.company);
+          const inn = resolver.getPkoInn(b.company);
           const canClick = !!(onCompanyClick && inn);
           return (
             <tr
@@ -93,8 +102,8 @@ export function BondsTable({ onCompanyClick }: BondsTableProps) {
               className={rowClassName(canClick)}
               onClick={() => canClick && onCompanyClick!(inn!)}
             >
-              <td className={`${s.td} ${s.tdRank}`} style={sticky.rankTd}>{getPkoRank(b.company) ?? '—'}</td>
-              <td className={`${s.td} ${s.tdLogo}`} style={sticky.logoTd}><NamedAvatar name={b.company} /></td>
+              <td className={`${s.td} ${s.tdRank}`} style={sticky.rankTd}>{resolver.getPkoRank(b.company) ?? '—'}</td>
+              <td className={`${s.td} ${s.tdLogo}`} style={sticky.logoTd}><NamedAvatar name={b.company} resolver={resolver} /></td>
               <td className={`${s.td} ${s.tdName}`}>{stripOrgForm(b.company)}</td>
               <td className={s.td}><RatingBadge rating={b.rating} /></td>
               <td className={s.td}>

@@ -10,6 +10,10 @@
       <!-- Preload the cyrillic Inter subset (the only one actually used on Russian pages). -->
       <link rel="preload" as="font" type="font/woff2" crossorigin
             href="/fonts/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa0ZL7W0Q5n-wU.woff2" />
+      <!-- Preload first-paint data so the browser starts fetching in parallel with parsing JS. -->
+      <link rel="preload" as="fetch" type="application/json" crossorigin href="/data/rating.json" />
+      <link rel="preload" as="fetch" type="application/json" crossorigin href="/data/logo-map.json" />
+      <link rel="preload" as="fetch" type="application/json" crossorigin href="/data/articles.json" />
     </head>
 
     <body style="margin:0;background:#0a0f15">
