@@ -95,32 +95,3 @@
 }
 .cancelBtn:hover { background: rgba(255, 255, 255, 0.14); }
 
-.avatarLogo {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-.avatarLogo img {
-  max-width: 20px;
-  max-height: 20px;
-  object-fit: contain;
-}
-
-.avatarLetter {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 700;
-  flex-shrink: 0;
-}

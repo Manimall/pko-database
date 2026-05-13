@@ -1,42 +1,8 @@
-import { useState } from 'react';
 import { X, GitCompareArrows } from 'lucide-react';
 import { RatingCompany } from '../data/ratingData';
-import { logoMap } from '../data/logoMap';
 import { stripOrgForm } from '../utils/formatCompanyName';
+import { CompanyAvatar } from './CompanyAvatar';
 import s from './CompareFloatingBar.module.css';
-
-const AVATAR_COLORS = [
-  '#00B2AA', '#0060B9', '#4326BA', '#00B982', '#0DF0E6',
-  '#0078d4', '#6B3FA0', '#00a67d', '#008c84', '#0052a3',
-];
-
-function TinyAvatar({ name, rank, inn }: { name: string; rank: number; inn: string }) {
-  const logoFile = logoMap[inn];
-  const [imgError, setImgError] = useState(false);
-
-  if (logoFile && !imgError) {
-    return (
-      <div className={s.avatarLogo}>
-        <img
-          src={`/logos/${logoFile}`}
-          alt={name}
-          loading="lazy"
-          decoding="async"
-          onError={() => setImgError(true)}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={s.avatarLetter}
-      style={{ background: AVATAR_COLORS[(rank - 1) % AVATAR_COLORS.length] }}
-    >
-      {name[0] ?? '?'}
-    </div>
-  );
-}
 
 interface CompareFloatingBarProps {
   selectedCompanies: RatingCompany[];
@@ -59,7 +25,7 @@ export function CompareFloatingBar({
       <div className={s.chips}>
         {selectedCompanies.map(c => (
           <div key={c.inn} className={s.chip}>
-            <TinyAvatar name={stripOrgForm(c.name)} rank={c.rank} inn={c.inn} />
+            <CompanyAvatar name={stripOrgForm(c.name)} rank={c.rank} inn={c.inn} size={24} />
             <span className={s.chipName}>{stripOrgForm(c.name)}</span>
             <button
               type="button"
