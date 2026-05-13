@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, TrendingUp, BarChart3, Bui
 import { RatingCompany } from '../data/ratingData';
 import { CompanyDetails, YearlyFinancials } from '../data/companyDetails';
 import { logoMap } from '../data/logoMap';
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 import { stripOrgForm } from '../utils/formatCompanyName';
 
 // ── Companies showing previous-year data ────────────────────────

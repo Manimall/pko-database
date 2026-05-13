@@ -12,7 +12,7 @@ import { Sidebar } from '../components/Sidebar';
 import { Footer } from '../components/Footer';
 import { CompareModal } from '../components/CompareModal';
 import { CompareFloatingBar } from '../components/CompareFloatingBar';
-import { useIsMobile } from '../components/ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 import { ratingData, RatingCompany } from '../data/ratingData';
 import type { Router } from '../routing';
 import s from './RatingPage.module.css';

@@ -1,5 +1,5 @@
 import { Building2, BarChart3, TrendingUp } from 'lucide-react';
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 import { SiteHeader } from './SiteHeader';
 
 interface HeroScreenProps {

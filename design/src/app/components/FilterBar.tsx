@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, ChevronUp, X, Search, GitCompareArrows, SlidersHorizontal } from 'lucide-react';
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 
 // ── Filter interfaces ────────────────────────────────────────────
 

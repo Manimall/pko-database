@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { ArrowUp, ArrowDown, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { RatingCompany } from '../data/ratingData';
 import { logoMap } from '../data/logoMap';
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 import { stripOrgForm } from '../utils/formatCompanyName';
 
 const PAGE_SIZE = 100;

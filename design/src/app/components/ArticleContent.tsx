@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, Calendar } from 'lucide-react';
 import { articles, Article, ArticleSection } from '../data/articlesData';
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 
 function SectionRenderer({ section }: { section: ArticleSection }) {
   switch (section.type) {

@@ -1,4 +1,4 @@
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 
 interface SiteHeaderProps {
   activeTab?: 'pko300' | 'thematic';

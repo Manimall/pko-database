@@ -1,4 +1,4 @@
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 
 const ACCENT = '#0DF0E6';
 const MUTED = 'rgba(255,255,255,0.35)';

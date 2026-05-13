@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowUp, ArrowDown, ArrowUpDown, ExternalLink } from 'lucide-react';
-import { useIsMobile } from './ui/use-mobile';
+import { useIsMobile } from '../shared/hooks/useIsMobile';
 import { stripOrgForm } from '../utils/formatCompanyName';
 import { bonds, siteLoans, corporates, allInvestments, Bond, SiteLoan, Corporate, AllInvestment } from '../data/investmentData';
 import { ratingData } from '../data/ratingData';
