@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { HeroScreen } from '../components/HeroScreen';
 import {
   PresetTabs,
@@ -10,8 +10,12 @@ import { RatingTable, ExtraColumn } from '../components/RatingTable';
 import { InvestmentTable } from '../components/InvestmentTable';
 import { Sidebar } from '../components/Sidebar';
 import { Footer } from '../components/Footer';
-import { CompareModal } from '../components/CompareModal';
 import { CompareFloatingBar } from '../components/CompareFloatingBar';
+
+// Compare modal only mounts when user clicks "Сравнить" — code-split it.
+const CompareModal = lazy(() =>
+  import('../components/CompareModal').then(m => ({ default: m.CompareModal }))
+);
 import { useIsMobile } from '../shared/hooks/useIsMobile';
 import { ratingData, RatingCompany } from '../data/ratingData';
 import type { Router } from '../routing';
@@ -213,10 +217,12 @@ export function RatingPage({ router }: { router: Router }) {
       )}
 
       {showCompareModal && (
-        <CompareModal
-          companies={ratingData.filter(c => selectedInns.has(c.inn))}
-          onClose={() => setShowCompareModal(false)}
-        />
+        <Suspense fallback={null}>
+          <CompareModal
+            companies={ratingData.filter(c => selectedInns.has(c.inn))}
+            onClose={() => setShowCompareModal(false)}
+          />
+        </Suspense>
       )}
     </div>
   );
