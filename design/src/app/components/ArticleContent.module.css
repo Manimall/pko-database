@@ -1,0 +1,217 @@
+.root {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.notFound {
+  padding: 64px;
+  text-align: center;
+  color: var(--text-muted-40);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted-50);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 20px 0 16px;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+.backLink:hover { color: var(--color-accent); }
+
+.heroBox {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.heroBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.heroBox::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 15, 21, 0.85) 0%, transparent 60%);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: 0 0 28px;
+  letter-spacing: -0.01em;
+}
+
+.sections { margin-bottom: 48px; }
+
+.heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 32px 0 16px;
+  padding-left: 14px;
+  border-left: 3px solid var(--color-accent);
+  line-height: 1.3;
+}
+
+.subheading {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 24px 0 12px;
+  line-height: 1.3;
+}
+
+.paragraph {
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0 0 16px;
+}
+
+.bullets {
+  margin: 0 0 16px;
+  padding-left: 0;
+  list-style: none;
+}
+.bullet {
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.65);
+  padding: 4px 0 4px 20px;
+  position: relative;
+}
+.bullet::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.tableWrap {
+  margin: 20px 0 24px;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 500px;
+}
+.table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: rgba(13, 240, 230, 0.05);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+.table td {
+  padding: 10px 14px;
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+.otherSection {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 32px;
+  margin-bottom: 48px;
+}
+
+.otherHeading {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted-40);
+  margin: 0 0 16px;
+}
+
+.otherList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.otherRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+}
+.otherRow:hover { border-color: var(--border-accent); }
+
+.otherThumb {
+  width: 64px;
+  height: 44px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.otherThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.otherTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .heroBox { height: 200px; }
+  .title   { font-size: 22px; }
+}
