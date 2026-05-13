@@ -18,6 +18,7 @@
 
 - **Node.js 20.x** (рекомендуется 20.19+). На macOS удобно через [nvm](https://github.com/nvm-sh/nvm).
 - **pnpm 10+** (на новых нодах ставится через `corepack enable && corepack prepare pnpm@latest --activate`).
+- **cwebp** (`brew install webp`) — только если будете пересобирать логотипы.
 
 ### Команды
 
@@ -36,7 +37,7 @@ pnpm build
 # Локальный предпросмотр прод-сборки
 pnpm preview
 
-# Тесты (Vitest)
+# Тесты (Vitest, ~3 сек)
 pnpm test            # однократный прогон
 pnpm test:watch      # watch-режим
 ```
@@ -57,16 +58,31 @@ corepack prepare pnpm@latest --activate
 
 ---
 
-## Обновление данных
+## Обновление данных без пересборки фронтенда
 
-База ПКО редактируется в `data/ПКО_БАЗА_ДАННЫХ_2024.xlsx`. Чтобы пересобрать TS-файлы данных, которые читает фронтенд:
+Данные ПКО лежат как **статические JSON-файлы** в `design/public/data/`. Фронтенд читает их через `fetch` при первой загрузке. **Обновление данных не требует пересборки и редеплоя фронтенда** — достаточно перезалить JSON.
 
+### Workflow
+
+1. Положить свежую выгрузку в `data/source/PKO-YYYY-MM.xlsx`.
+2. Прогнать пайплайн:
+   ```bash
+   python3 scripts/update_data.py --dry-run   # посмотреть diff
+   python3 scripts/update_data.py             # реальная запись
+   ```
+   Скрипт пишет в `design/public/data/`:
+   - `rating.json`         — рейтинг (530+ компаний)
+   - `company-details.json` — данные карточек
+   - Сохраняет ручные правки (`napka`, `capitalAttraction`, `website`, `fundraising`, `bonds`) из текущих JSON-ов.
+3. Закоммитить и запушить — Vercel задеплоит обновлённые статические файлы.
+
+### Конверсия логотипов
+
+Если в базу добавились новые ПКО с PNG-логотипами:
 ```bash
-cd scripts
-python3 update_data.py
+bash design/scripts/convert-images-to-webp.sh
 ```
-
-Скрипт перезапишет файлы в `design/src/app/data/` (они помечены `Auto-generated`, не править вручную). Подробнее — в [CLAUDE.md](CLAUDE.md).
+Скрипт идемпотентен — пересобирает только новые/изменённые файлы. Затем обновить `logoMap` (генерируется в составе rating-обновления) и закоммитить.
 
 ---
 
@@ -74,79 +90,94 @@ python3 update_data.py
 
 ```
 design/
-├── index.html              # точка входа (preload hero JPG + Inter cyrillic)
-├── package.json            # только то, что реально используется: react, react-dom, lucide-react + vite
-├── vite.config.ts
+├── index.html              # preload: hero WebP, Inter cyrillic, 3 первых JSON
+├── package.json            # 3 prod-зависимости (react, react-dom, lucide-react)
+├── vite.config.ts          # + vitest config
 ├── vercel.json             # SPA-rewrite для прямых ссылок
-├── public/                 # ассеты: логотипы (440), шрифты, hero
+├── public/
+│   ├── data/               # 📦 статические JSON, обновляются update_data.py
+│   │   ├── rating.json
+│   │   ├── company-details.json
+│   │   ├── logo-map.json
+│   │   ├── articles.json
+│   │   └── investment-*.json   (bonds, loans, corporates, all)
+│   ├── logos/              # 440 WebP логотипов (~2 MB)
+│   ├── images/             # hero, article covers (WebP)
+│   ├── fonts/              # 3 woff2: Inter cyrillic/latin + Space Grotesk latin
+│   ├── logo-rvdp.webp
+│   └── logo-navigator.webp
 └── src/
-    ├── main.tsx
+    ├── main.tsx                                # preload первых JSON параллельно с React-рендером
     ├── app/
-    │   ├── App.tsx                          # роутинг-диспетчер, 29 строк
-    │   ├── routing.ts                       # useRouter() + History API (pushState/popstate)
-    │   ├── shared/
-    │   │   ├── theme.ts                     # TS-зеркало дизайн-токенов
-    │   │   └── hooks/useIsMobile.ts
+    │   ├── App.tsx                             # 29 строк — роутинг-диспетчер
+    │   ├── routing.ts                          # useRouter() + History API
+    │   ├── shared/hooks/useIsMobile.ts
     │   ├── pages/
-    │   │   ├── PageLayout.tsx               # общий шелл (Header + container + Footer)
-    │   │   ├── RatingPage.tsx               # главная: фильтры + таблица + сравнение
-    │   │   ├── ratingFilters.ts             # чистая логика фильтрации (тестируется отдельно)
-    │   │   ├── CompanyPage.tsx              # карточка компании (lazy-chunk)
-    │   │   ├── ArticlePage.tsx              # статья (lazy-chunk)
-    │   │   └── ThematicPage.tsx             # список тематических рейтингов
+    │   │   ├── PageLayout.tsx
+    │   │   ├── RatingPage.tsx
+    │   │   ├── ratingFilters.ts                # чистая логика фильтрации (тестируется)
+    │   │   ├── CompanyPage.tsx                 # ждёт ratingData + companyDetails
+    │   │   ├── ArticlePage.tsx                 # lazy chunk
+    │   │   └── ThematicPage.tsx
     │   ├── components/
-    │   │   ├── companyCard/                 # карточка ПКО: HeaderSection, FinancialsSection,
-    │   │   │                                #   CapitalStructureSection, DynamicsSection,
-    │   │   │                                #   FundraisingSidebar + helpers.ts + CSS-модуль
-    │   │   ├── ratingTable/                 # таблица: DesktopTable, MobileTable, Pager, cells
-    │   │   ├── filterBar/                   # фильтры: панель, поповер, чипы, типы
-    │   │   ├── investmentTable/             # 4 таблицы привлечения капитала + бейджи
-    │   │   ├── ArticleCard.tsx              # карточка статьи (для тематической сетки)
-    │   │   ├── ArticleContent.tsx           # содержимое статьи (lazy-chunk)
-    │   │   ├── CompanyAvatar.tsx            # общий аватар (логотип/буква) для 3 компонентов
-    │   │   ├── CompareModal.tsx             # модалка сравнения (lazy-chunk)
-    │   │   ├── CompareFloatingBar.tsx       # плашка выбранных
-    │   │   ├── compareMetrics.ts            # метрики сравнения (отдельный модуль)
-    │   │   ├── Footer.tsx
-    │   │   ├── HeroScreen.tsx
-    │   │   ├── Sidebar.tsx
-    │   │   └── SiteHeader.tsx
-    │   ├── data/                            # ⚠️ auto-generated TS-файлы из xlsx
-    │   │   ├── ratingData.ts
-    │   │   ├── companyDetails.ts            # подгружается отдельным чанком
-    │   │   ├── financeDynamic.ts            # подгружается отдельным чанком
-    │   │   ├── articlesData.ts
-    │   │   ├── investmentData.ts
-    │   │   └── logoMap.ts
-    │   └── utils/
-    │       └── formatCompanyName.ts         # stripOrgForm helper
+    │   │   ├── companyCard/                    # HeaderSection, FinancialsSection,
+    │   │   │                                   #   CapitalStructureSection, DynamicsSection,
+    │   │   │                                   #   FundraisingSidebar + helpers + CSS-модуль
+    │   │   ├── ratingTable/                    # DesktopTable, MobileTable, Pager, cells
+    │   │   ├── filterBar/                      # FilterBar, FilterDropdown, FilterSections,
+    │   │   │                                   #   ActiveChips, primitives, types
+    │   │   ├── investmentTable/                # InvestmentTable, BondsTable, SimpleTables,
+    │   │   │                                   #   badges, common, helpers
+    │   │   ├── ArticleCard.tsx
+    │   │   ├── ArticleContent.tsx              # lazy chunk
+    │   │   ├── CompanyAvatar.tsx               # общий аватар (logo|letter)
+    │   │   ├── CompareModal.tsx                # lazy chunk
+    │   │   ├── CompareFloatingBar.tsx
+    │   │   ├── compareMetrics.ts               # метрики сравнения (тестируется)
+    │   │   ├── Footer.tsx, HeroScreen.tsx,
+    │   │   ├── Sidebar.tsx, SiteHeader.tsx
+    │   ├── data/                               # 📐 ТОЛЬКО ТИПЫ (значения в /public/data)
+    │   │   ├── ratingData.ts                   # interface RatingCompany
+    │   │   ├── companyDetails.ts               # interface CompanyDetails
+    │   │   ├── articlesData.ts                 # interface Article
+    │   │   ├── investmentData.ts               # Bond, SiteLoan, Corporate, AllInvestment
+    │   │   ├── logoMap.ts                      # type LogoMap
+    │   │   ├── loader.ts                       # fetch + memo-cache (peek/load)
+    │   │   └── useAsyncData.ts                 # React-хук поверх loader
+    │   └── utils/formatCompanyName.ts
+    ├── scripts/
+    │   ├── build-data-json.mjs                 # bootstrap скрипт (one-shot)
+    │   └── convert-images-to-webp.sh           # batch конверсия логотипов
     └── styles/
-        ├── index.css                        # глобальный импорт
-        ├── tokens.css                       # CSS-переменные (цвета, шрифты, размеры)
-        └── fonts.css                        # @font-face (3 правила, было 56)
+        ├── index.css                           # @import fonts + tokens
+        ├── tokens.css                          # CSS-переменные (цвета, шрифты, размеры)
+        └── fonts.css                           # 3 @font-face (Inter cyr + latin, SG latin)
 ```
 
 ### Технические принципы
 
-- **Стилизация**: CSS Modules + общие CSS-переменные в `styles/tokens.css`. Никакого Tailwind/PostCSS.
-- **Логика отделена от UI**: бизнес-логика (`applyFilters`, `getPkoRank`, `routeFromLocation`, `fmtMoney`, метрики сравнения) живёт в отдельных `.ts`-модулях рядом с компонентами и покрыта тестами.
-- **Code splitting**: страницы и тяжёлые компоненты (CompanyCard + companyDetails, ArticleContent, CompareModal) подгружаются через `React.lazy` — главный бандл 107 KB gzip, тяжёлый чанк компании 124 KB грузится только при клике.
-- **Роутинг**: History API напрямую, без react-router. URL-схема: `/`, `/?company=INN`, `/thematic`, `/article/ID`.
-- **Размер файлов**: все компоненты ≤300 строк; крупные разбиты на подпапки.
+- **Данные отвязаны от приложения**. `src/app/data/*.ts` содержит только типы. Сами значения — статические JSON-файлы в `public/data/`, которые загружаются на runtime. Update пайплайна пишет JSON, фронт пересобирать не надо.
+- **Стилизация**: CSS Modules + общие CSS-переменные в `styles/tokens.css`. Никакого Tailwind/PostCSS/CSS-in-JS.
+- **Логика отделена от UI**: чистая бизнес-логика (`applyFilters`, `createInvestmentResolver`, `routeFromLocation`, `fmtMoney`, метрики сравнения) живёт в отдельных `.ts`-модулях и покрыта unit-тестами.
+- **Code splitting**: страницы и тяжёлые компоненты (CompanyCard, ArticleContent, CompareModal) подгружаются через `React.lazy`. companyDetails.json (584 KB) тянется только при открытии карточки.
+- **Роутинг**: History API напрямую, без `react-router`. URL-схема: `/`, `/?company=INN`, `/thematic`, `/article/ID`.
+- **Размер файлов**: все продакшен-компоненты ≤300 строк; крупные разбиты на подпапки.
 - **Тестирование**: Vitest + jsdom; 95 тестов покрывают роутинг, форматтеры, фильтры рейтинга, метрики сравнения, резолверы.
 
-### Что лежит в `dist/` после `pnpm build`
+### Размеры артефактов после `pnpm build`
 
 | Файл | gzip |
 |---|---|
-| `index-*.js` (главный) | ~107 KB |
-| `companyDetails-*.js` (lazy, только на карточке) | ~124 KB |
+| `index-*.js` (главный) | ~66 KB |
 | `CompanyCard-*.js` (lazy) | ~7 KB |
 | `CompareModal-*.js` (lazy) | ~2 KB |
-| `ArticleContent-*.js` (lazy) | ~2 KB |
-| `index-*.css` | ~2 KB |
+| `ArticleContent-*.js` (lazy) | ~1 KB |
+| CSS суммарно | ~10 KB |
+| **Всего JS+CSS на первый экран** | **~76 KB gzip** |
 
-Для сравнения, до оптимизации главный бандл был 239 KB gzip с monolithic JS.
+Параллельно браузер тянет 3 JSON: `rating` (40 KB gzip), `logo-map` (5 KB), `articles` (3 KB). `company-details.json` (124 KB gzip) грузится только при открытии карточки.
+
+Для сравнения, до оптимизации главный бандл был **239 KB gzip** с monolithic JS.
 
 ---
 
@@ -157,11 +188,12 @@ design/
 - Build command: `pnpm build` (рабочая директория `design`)
 - Output: `design/dist`
 - `vercel.json` уже настроен на SPA-rewrite, чтобы прямые ссылки `/thematic`, `/article/:id`, `/?company=:inn` работали без 404.
+- `public/data/*.json` копируются в `dist/data/` как есть, отдаются Vercel CDN с long-cache headers.
 
 ---
 
 ## Дополнительная документация
 
-- [docs/TECH_RECOMMENDATIONS.md](docs/TECH_RECOMMENDATIONS.md) — что ещё можно улучшить (PNG → WebP, lazy данных через fetch JSON, ESLint+CI и т.д.).
+- [docs/TECH_RECOMMENDATIONS.md](docs/TECH_RECOMMENDATIONS.md) — что ещё можно улучшить (TS strict, ESLint+CI и т.д.).
 - [docs/ТЗ_ПЛАТФОРМА_ПКО.md](docs/ТЗ_ПЛАТФОРМА_ПКО.md) — техническое задание.
 - [CLAUDE.md](CLAUDE.md) — правила работы с данными и git-флоу.
