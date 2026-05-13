@@ -141,7 +141,7 @@ function HeaderSection({ company, details, logoFile }: { company: RatingCompany;
               flexShrink: 0, overflow: 'hidden',
             }}>
               {logoFile ? (
-                <img src={`/logos/${logoFile}`} alt="" style={{ maxWidth: `${logoInner}px`, maxHeight: `${logoInner}px`, objectFit: 'contain' }} />
+                <img src={`/logos/${logoFile}`} alt="" decoding="async" style={{ maxWidth: `${logoInner}px`, maxHeight: `${logoInner}px`, objectFit: 'contain' }} />
               ) : (
                 <span style={{ fontSize: '18px', fontWeight: 700, color: ACCENT }}>{stripOrgForm(company.name)[0]}</span>
               )}
@@ -225,7 +225,7 @@ function HeaderSection({ company, details, logoFile }: { company: RatingCompany;
             flexShrink: 0, overflow: 'hidden',
           }}>
             {logoFile ? (
-              <img src={`/logos/${logoFile}`} alt="" style={{ maxWidth: '48px', maxHeight: '48px', objectFit: 'contain' }} />
+              <img src={`/logos/${logoFile}`} alt="" decoding="async" style={{ maxWidth: '48px', maxHeight: '48px', objectFit: 'contain' }} />
             ) : (
               <span style={{ fontSize: '22px', fontWeight: 700, color: ACCENT }}>{stripOrgForm(company.name)[0]}</span>
             )}

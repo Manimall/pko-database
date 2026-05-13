@@ -131,7 +131,7 @@ function MiniAvatar({ name, rank, inn }: { name: string; rank: number; inn: stri
         width: '28px', height: '28px', borderRadius: '6px', background: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
       }}>
-        <img src={`/logos/${logoFile}`} alt={name} onError={() => setImgError(true)}
+        <img src={`/logos/${logoFile}`} alt={name} loading="lazy" decoding="async" onError={() => setImgError(true)}
           style={{ maxWidth: '24px', maxHeight: '24px', objectFit: 'contain' }} />
       </div>
     );

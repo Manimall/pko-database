@@ -45,6 +45,8 @@ export function HeroScreen({ activeTab = 'pko300', onNavigateToThematic, onNavig
         <img
           src="/images/hero-architecture.jpg"
           alt="Architecture Background"
+          decoding="async"
+          fetchPriority="high"
           style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', opacity: 0.3, filter: 'grayscale(100%) contrast(1.2) brightness(0.7)' }}
         />
       </div>

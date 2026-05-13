@@ -21,7 +21,7 @@ function TinyAvatar({ name, rank, inn }: { name: string; rank: number; inn: stri
         width: '24px', height: '24px', borderRadius: '5px', background: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
       }}>
-        <img src={`/logos/${logoFile}`} alt={name} onError={() => setImgError(true)}
+        <img src={`/logos/${logoFile}`} alt={name} loading="lazy" decoding="async" onError={() => setImgError(true)}
           style={{ maxWidth: '20px', maxHeight: '20px', objectFit: 'contain' }} />
       </div>
     );

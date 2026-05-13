@@ -62,6 +62,8 @@ function Avatar({ name, rank, inn }: { name: string; rank: number; inn: string }
         <img
           src={`/logos/${logoFile}`}
           alt={name}
+          loading="lazy"
+          decoding="async"
           onError={() => setImgError(true)}
           style={{
             maxWidth: '28px',

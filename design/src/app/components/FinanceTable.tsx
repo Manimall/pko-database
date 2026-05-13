@@ -65,7 +65,7 @@ function Avatar({ name, rank, inn }: { name: string; rank: number; inn: string }
   if (logoFile && !imgError) {
     return (
       <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
-        <img src={`/logos/${logoFile}`} alt={name} onError={() => setImgError(true)} style={{ maxWidth: '28px', maxHeight: '28px', objectFit: 'contain' }} />
+        <img src={`/logos/${logoFile}`} alt={name} loading="lazy" decoding="async" onError={() => setImgError(true)} style={{ maxWidth: '28px', maxHeight: '28px', objectFit: 'contain' }} />
       </div>
     );
   }
