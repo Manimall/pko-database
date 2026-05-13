@@ -21,7 +21,6 @@ const datasets = [
   { module: '../src/app/data/logoMap.ts',        exportName: 'logoMap',           outFile: 'logo-map.json' },
   { module: '../src/app/data/articlesData.ts',   exportName: 'articles',          outFile: 'articles.json' },
   { module: '../src/app/data/companyDetails.ts', exportName: 'companyDetailsMap', outFile: 'company-details.json' },
-  { module: '../src/app/data/financeDynamic.ts', exportName: 'financeDynamic',    outFile: 'finance-dynamic.json' },
   { module: '../src/app/data/investmentData.ts', exportName: 'bonds',             outFile: 'investment-bonds.json' },
   { module: '../src/app/data/investmentData.ts', exportName: 'siteLoans',         outFile: 'investment-loans.json' },
   { module: '../src/app/data/investmentData.ts', exportName: 'corporates',        outFile: 'investment-corporates.json' },

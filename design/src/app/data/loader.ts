@@ -12,7 +12,6 @@
 import type { RatingCompany } from './ratingData';
 import type { Article } from './articlesData';
 import type { CompanyDetails } from './companyDetails';
-import type { FinanceDynamic } from './financeDynamic';
 import type { Bond, SiteLoan, Corporate, AllInvestment } from './investmentData';
 import type { LogoMap } from './logoMap';
 
@@ -47,7 +46,6 @@ export const URLS = {
   logoMap:                '/data/logo-map.json',
   articles:               '/data/articles.json',
   companyDetails:         '/data/company-details.json',
-  financeDynamic:         '/data/finance-dynamic.json',
   investmentBonds:        '/data/investment-bonds.json',
   investmentLoans:        '/data/investment-loans.json',
   investmentCorporates:   '/data/investment-corporates.json',
@@ -58,7 +56,6 @@ export const loadRatingData         = () => load<RatingCompany[]>(URLS.rating);
 export const loadLogoMap            = () => load<LogoMap>(URLS.logoMap);
 export const loadArticles           = () => load<Article[]>(URLS.articles);
 export const loadCompanyDetails     = () => load<Record<string, CompanyDetails>>(URLS.companyDetails);
-export const loadFinanceDynamic     = () => load<FinanceDynamic[]>(URLS.financeDynamic);
 export const loadInvestmentBonds      = () => load<Bond[]>(URLS.investmentBonds);
 export const loadInvestmentLoans      = () => load<SiteLoan[]>(URLS.investmentLoans);
 export const loadInvestmentCorporates = () => load<Corporate[]>(URLS.investmentCorporates);

@@ -19,7 +19,7 @@ JSON пишется напрямую в design/public/data/, поэтому по
     4. Сортирует компании по полю «Выручка + прочие доходы 2025» (по убыванию).
     5. Присваивает плотный ранг 1..N.
     6. Если «Краткое название» пусто — fallback на полное через stripOrgForm.
-    7. Перезаписывает rating.json, finance-dynamic.json, company-details.json
+    7. Перезаписывает rating.json и company-details.json
        в design/public/data/.
     8. Печатает лог: добавлено/удалено/перемещено + топ-20.
 
@@ -44,7 +44,6 @@ REPO = Path(__file__).resolve().parent.parent
 SOURCE_DIR = REPO / "data" / "source"
 PUBLIC_DATA_DIR = REPO / "design" / "public" / "data"
 RATING_JSON = PUBLIC_DATA_DIR / "rating.json"
-FINANCE_JSON = PUBLIC_DATA_DIR / "finance-dynamic.json"
 DETAILS_JSON = PUBLIC_DATA_DIR / "company-details.json"
 
 YEARS = [2021, 2022, 2023, 2024, 2025]
@@ -274,18 +273,6 @@ def build_rating_entry(row: dict, rank: int, name: str, old_rating: dict) -> dic
     }
 
 
-def build_finance_entry(row: dict, rank: int, name: str) -> dict:
-    return {
-        "rank": rank,
-        "name": name,
-        "inn": row["__inn"],
-        "income": [round(parse_num(row.get(f"Выручка + прочие доходы {y}"))) for y in YEARS],
-        "cost": [round(parse_num(row.get(f"Расходы {y}"))) for y in YEARS],
-        "profit": [round(parse_num(row.get(f"Чистая прибыль {y}"))) for y in YEARS],
-        "receivable": [round(parse_num(row.get(f"Дебит. задолженность {y}"))) for y in YEARS],
-    }
-
-
 def build_details_entry(row: dict, old_details: dict) -> dict:
     inn = row["__inn"]
     saved = old_details.get(inn, {})
@@ -341,13 +328,6 @@ def write_json_files(rows_with_rank: list[tuple[int, str, dict]], src_name: str,
               for rank, name, row in rows_with_rank]
     RATING_JSON.write_text(
         json.dumps(rating, ensure_ascii=False),
-        encoding="utf-8",
-    )
-
-    finance = [build_finance_entry(row, rank, name)
-               for rank, name, row in rows_with_rank]
-    FINANCE_JSON.write_text(
-        json.dumps(finance, ensure_ascii=False),
         encoding="utf-8",
     )
 
@@ -477,7 +457,7 @@ def main():
     src_name = src.name
     write_json_files(rows_with_rank, src_name, old_rating, old_details)
     print()
-    print(f"✅ Wrote {len(rows)} entries → {RATING_JSON.name}, {FINANCE_JSON.name}, {DETAILS_JSON.name}")
+    print(f"✅ Wrote {len(rows)} entries → {RATING_JSON.name}, {DETAILS_JSON.name}")
 
 
 if __name__ == "__main__":
