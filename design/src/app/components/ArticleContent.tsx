@@ -135,13 +135,13 @@ function SectionRenderer({ section }: { section: ArticleSection }) {
   }
 }
 
-interface ArticlePageProps {
+interface ArticleContentProps {
   articleId: string;
   onBack: () => void;
   onArticleClick: (id: string) => void;
 }
 
-export function ArticlePage({ articleId, onBack, onArticleClick }: ArticlePageProps) {
+export function ArticleContent({ articleId, onBack, onArticleClick }: ArticleContentProps) {
   const isMobile = useIsMobile();
   const article = articles.find(a => a.id === articleId);
 
@@ -191,6 +191,8 @@ export function ArticlePage({ articleId, onBack, onArticleClick }: ArticlePagePr
         <img
           src={article.image}
           alt={article.title}
+          decoding="async"
+          fetchPriority="high"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <div style={{
@@ -272,7 +274,7 @@ export function ArticlePage({ articleId, onBack, onArticleClick }: ArticlePagePr
                   overflow: 'hidden',
                   borderRadius: '4px',
                 }}>
-                  <img src={a.image} alt={a.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={a.image} alt={a.title} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{

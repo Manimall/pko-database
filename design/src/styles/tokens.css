@@ -1,0 +1,33 @@
+/* Design tokens — single source of truth for colors, typography, surfaces.
+   Mirror values in src/app/shared/theme.ts for places that still use inline style. */
+
+:root {
+  /* Surfaces */
+  --bg-base: #0a0f15;
+  --bg-card: #111920;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(13, 240, 230, 0.2);
+
+  /* Text */
+  --text-primary: #fff;
+  --text-muted-30: rgba(255, 255, 255, 0.3);
+  --text-muted-40: rgba(255, 255, 255, 0.4);
+  --text-muted-45: rgba(255, 255, 255, 0.45);
+  --text-muted-50: rgba(255, 255, 255, 0.5);
+
+  /* Accent */
+  --color-accent: #0DF0E6;
+  --color-danger: #ef4444;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+
+  /* Layout */
+  --content-max-width: 1100px;
+  --content-pad-desktop: 32px;
+  --content-pad-mobile: 12px;
+
+  /* Effects */
+  --shadow-card-hover: 0 4px 24px rgba(0, 0, 0, 0.3);
+}

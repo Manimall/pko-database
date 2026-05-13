@@ -1,0 +1,44 @@
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted-50);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 20px 0 16px;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+
+.backLink:hover {
+  color: var(--color-accent);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.lead {
+  font-size: 14px;
+  color: var(--text-muted-45);
+  line-height: 1.7;
+  margin: 0 0 32px;
+  max-width: 600px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+@media (max-width: 767px) {
+  .title { font-size: 24px; }
+  .grid  { grid-template-columns: 1fr; }
+}
