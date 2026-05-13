@@ -7,7 +7,7 @@ import type { CompanyDetails } from '../data/companyDetails';
 // Code-split: CompanyCard + companyDetails + financeDynamic pull a separate chunk
 // (~55 KB gzip) that loads only when the user actually opens a company card.
 const CompanyCard = lazy(() =>
-  import('../components/CompanyCard').then(m => ({ default: m.CompanyCard }))
+  import('../components/companyCard').then(m => ({ default: m.CompanyCard }))
 );
 
 interface CompanyPageProps {

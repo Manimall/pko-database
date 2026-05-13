@@ -5,9 +5,9 @@ import {
   SearchFilterBar,
   Preset,
   RatingFilters,
-} from '../components/FilterBar';
-import { RatingTable, ExtraColumn } from '../components/RatingTable';
-import { InvestmentTable } from '../components/InvestmentTable';
+} from '../components/filterBar';
+import { RatingTable, ExtraColumn } from '../components/ratingTable';
+import { InvestmentTable } from '../components/investmentTable';
 import { Sidebar } from '../components/Sidebar';
 import { Footer } from '../components/Footer';
 import { CompareFloatingBar } from '../components/CompareFloatingBar';

@@ -1,4 +1,4 @@
-import { ratingData } from '../data/ratingData';
+import { ratingData } from '../../data/ratingData';
 
 const rankByName = new Map<string, number>();
 const innByName = new Map<string, string>();
