@@ -40,7 +40,7 @@ export function HeroScreen({
         />
       </div>
 
-      <main className={s.main}>
+      <section className={s.main} aria-label="ПКО-300 — главный рейтинг">
         <div className={s.content}>
           <h1 className={s.title}>ПКО-300</h1>
           <p className={s.subtitle}>Главный рейтинг коллекторских агентств России</p>
@@ -57,7 +57,7 @@ export function HeroScreen({
             ))}
           </div>
         </div>
-      </main>
+      </section>
     </div>
   );
 }
