@@ -14,46 +14,63 @@
 
 ## Локальный запуск фронтенда
 
-### Что нужно
+### Требования
 
-- **Node.js 20.x** (рекомендуется 20.19+). На macOS удобно через [nvm](https://github.com/nvm-sh/nvm).
-- **pnpm 10+** (на новых нодах ставится через `corepack enable && corepack prepare pnpm@latest --activate`).
-- **cwebp** (`brew install webp`) — только если будете пересобирать логотипы.
+- **Node.js ≥ 20.19** (тестировалось на 20.19.4 и 22.13.1).
+- **Corepack** (входит в Node 16+) — управляет версией pnpm автоматически.
+- **cwebp** (`brew install webp`) — только если будешь пересобирать логотипы.
 
-### Команды
+Версия pnpm пиннится через поле `"packageManager": "pnpm@10.6.5"` в `package.json` — corepack сам подхватит правильную версию при первой команде.
+
+### Первый запуск с нуля
 
 ```bash
-cd design
+# 1. Клонировать
+git clone git@github.com:Manimall/pko-database.git
+cd pko-database/design
 
-# Установка зависимостей (≈10–15 секунд)
+# 2. (Если node не той версии) — поставить через nvm
+nvm install 20.19.4
+nvm use 20.19.4
+
+# 3. Включить corepack (один раз для системы; --force нужно только если ругается на shim'ы)
+corepack enable --install-directory ~/.local/bin 2>/dev/null || corepack enable
+
+# 4. Поставить зависимости (corepack автоматически возьмёт pnpm@10.6.5 из package.json)
 pnpm install
 
-# Запуск dev-сервера (http://localhost:5173)
+# 5. Запустить dev-сервер — откроется http://localhost:5173/
 pnpm dev
-
-# Прод-сборка в design/dist
-pnpm build
-
-# Локальный предпросмотр прод-сборки
-pnpm preview
-
-# Тесты (Vitest, ~3 сек)
-pnpm test            # однократный прогон
-pnpm test:watch      # watch-режим
 ```
 
-### Если node не той версии
+### Остальные команды
 
 ```bash
-nvm install 20
-nvm use 20
+pnpm dev          # dev-сервер (HMR, http://localhost:5173)
+pnpm build        # прод-сборка в design/dist
+pnpm preview      # локальный предпросмотр прод-сборки
+pnpm test         # все 95 unit-тестов, ~3 сек
+pnpm test:watch   # watch-режим
 ```
 
-### Если pnpm не установлен
+### Если pnpm выдаёт ошибку про esbuild build scripts
+
+В `package.json` уже прописано:
+```json
+"pnpm": { "onlyBuiltDependencies": ["esbuild"] }
+```
+— это разрешает esbuild'у запускать postinstall. Если всё равно жалуется, выполнить:
 
 ```bash
-corepack enable
-corepack prepare pnpm@latest --activate
+pnpm approve-builds   # один раз, выбрать esbuild → 'a' для approve all
+```
+
+### Если установлен pnpm@11+ и ругается на Node < 22.13
+
+Поле `packageManager` в `package.json` заставит corepack использовать pnpm 10.6.5 (работает с Node 20.19+). Если этого не произошло, выполни:
+
+```bash
+corepack prepare pnpm@10.6.5 --activate
 ```
 
 ---
