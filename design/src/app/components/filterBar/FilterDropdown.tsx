@@ -44,7 +44,12 @@ export function FilterDropdown({ open, onClose, anchorRef, children }: FilterDro
 
   if (!open) return null;
 
-  const panelStyle = isMobile ? undefined : { top: pos.top, left: pos.left };
+  // На десктопе панель закреплена у нижней кромки кнопки и не может уходить за viewport —
+  // ограничиваем максимальную высоту так, чтобы оставался 20px зазор снизу и внутренний
+  // скролл по контенту. На мобильном панель занимает весь экран.
+  const panelStyle = isMobile
+    ? undefined
+    : { top: pos.top, left: pos.left, maxHeight: `calc(100vh - ${pos.top + 20}px)` };
 
   return createPortal(
     <div
