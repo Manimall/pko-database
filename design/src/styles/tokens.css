@@ -1,5 +1,21 @@
-/* Design tokens — single source of truth for colors, typography, surfaces.
-   Mirror values in src/app/shared/theme.ts for places that still use inline style. */
+/* Design tokens — single source of truth for colors, typography, surfaces. */
+
+/* ── Global base ──
+   Set on <body> so React-Portal modals (filter dropdown, compare modal) inherit
+   the same font family and colour as the rest of the page. Без этого браузер
+   падает в serif-фоллбэк (Times New Roman) для portal-контента. */
+html, body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
 
 :root {
   /* Surfaces */
