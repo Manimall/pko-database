@@ -44,13 +44,13 @@ export function FilterDropdown({ open, onClose, anchorRef, children }: FilterDro
 
   if (!open) return null;
 
-  // На десктопе панель прикреплена под кнопкой "Фильтры" и не уходит за viewport.
-  // 175px = высота шапки (~155px) + 20px зазор снизу — то же значение, что и
-  // на production. .panelBody внутри имеет overflow-y: auto и flex: 1 →
-  // длинный контент скроллится внутри панели.
+  // На десктопе панель прикреплена под кнопкой "Фильтры" и ограничена снизу
+  // viewport'ом — точно как на production: top/left из getBoundingClientRect,
+  // max-height = (100vh - top - 20px зазор). .panelBody (overflow-y: auto,
+  // flex: 1) даёт внутренний скролл по длинному контенту.
   const panelStyle = isMobile
     ? undefined
-    : { top: pos.top, left: pos.left, maxHeight: 'calc(100vh - 175px)' };
+    : { top: pos.top, left: pos.left, maxHeight: `calc(100vh - ${pos.top + 20}px)` };
 
   return createPortal(
     <div
