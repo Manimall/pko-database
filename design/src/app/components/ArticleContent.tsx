@@ -73,7 +73,8 @@ export function ArticleContent({ articleId, onBack, onArticleClick }: ArticleCon
           src={article.image}
           alt={article.title}
           decoding="async"
-          fetchPriority="high"
+          // React 18 prefers the lowercase HTML attribute name; spread bypasses TS noise.
+          {...{ fetchpriority: 'high' }}
         />
       </div>
 

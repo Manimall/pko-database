@@ -36,7 +36,8 @@ export function HeroScreen({
           src="/images/hero-architecture.webp"
           alt=""
           decoding="async"
-          fetchPriority="high"
+          // React 18 prefers the lowercase HTML attribute name; spread bypasses TS noise.
+          {...{ fetchpriority: 'high' }}
         />
       </div>
 
