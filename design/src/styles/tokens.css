@@ -1,9 +1,18 @@
 /* Design tokens — single source of truth for colors, typography, surfaces. */
 
 /* ── Global base ──
-   Set on <body> so React-Portal modals (filter dropdown, compare modal) inherit
-   the same font family and colour as the rest of the page. Без этого браузер
-   падает в serif-фоллбэк (Times New Roman) для portal-контента. */
+   border-box на всё — компоненты задают видимый размер, padding и border
+   входят в ширину. Без этого radio-кружки с 1.5px border раздувались с
+   18px до 21px (Tailwind preflight, который раньше делал то же самое,
+   удалён при чистке зависимостей).
+
+   font-family на <body> нужен, чтобы React-Portal модалки (FilterDropdown,
+   CompareModal) наследовали правильный шрифт — без этого они падают в
+   serif-фоллбэк (Times). */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   background: var(--bg-base);

@@ -44,12 +44,13 @@ export function FilterDropdown({ open, onClose, anchorRef, children }: FilterDro
 
   if (!open) return null;
 
-  // На десктопе панель закреплена у нижней кромки кнопки и не может уходить за viewport —
-  // ограничиваем максимальную высоту так, чтобы оставался 20px зазор снизу и внутренний
-  // скролл по контенту. На мобильном панель занимает весь экран.
+  // На десктопе панель прикреплена под кнопкой "Фильтры" и не уходит за viewport.
+  // 175px = высота шапки (~155px) + 20px зазор снизу — то же значение, что и
+  // на production. .panelBody внутри имеет overflow-y: auto и flex: 1 →
+  // длинный контент скроллится внутри панели.
   const panelStyle = isMobile
     ? undefined
-    : { top: pos.top, left: pos.left, maxHeight: `calc(100vh - ${pos.top + 20}px)` };
+    : { top: pos.top, left: pos.left, maxHeight: 'calc(100vh - 175px)' };
 
   return createPortal(
     <div
