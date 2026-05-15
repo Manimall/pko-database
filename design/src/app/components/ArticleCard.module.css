@@ -31,10 +31,7 @@
 
 .imageBox {
   width: 100%;
-  /* Фиксированная высота вместо aspect-ratio — гарантированно одинаковый
-     размер для всех карточек, независимо от пропорций исходного файла
-     (article-1 — portrait 800x1034, остальные — landscape). */
-  height: 200px;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   flex-shrink: 0;
 }
