@@ -5,13 +5,18 @@
   overflow: hidden;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
-  display: block;
+  /* flex-column убирает baseline-gap, который <button> добавлял сверху первого
+     блочного ребёнка (тот самый чёрный отступ над картинкой Москвы). */
+  display: flex;
+  flex-direction: column;
   text-decoration: none;
   color: inherit;
   text-align: left;
   padding: 0;
+  margin: 0;
   font: inherit;
   width: 100%;
+  line-height: 0; /* убираем half-leading от родительского line-height: 1.5 */
 }
 
 .card:hover {
@@ -26,19 +31,25 @@
 
 .imageBox {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  /* Фиксированная высота вместо aspect-ratio — гарантированно одинаковый
+     размер для всех карточек, независимо от пропорций исходного файла
+     (article-1 — portrait 800x1034, остальные — landscape). */
+  height: 200px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .imageBox img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
 .body {
   padding: 16px;
+  line-height: 1.5;
 }
 
 .meta {
