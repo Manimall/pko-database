@@ -18,6 +18,10 @@ html, body {
   background: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-sans);
+  /* Line-height 1.5 раньше прилетал из Tailwind preflight — после его
+     удаления элементы с padding (nav-кнопки, preset-tabs, чипсы фильтров)
+     съёжились на ~3-4px из-за браузерного default'а line-height: normal. */
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
