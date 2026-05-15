@@ -64,6 +64,9 @@
   padding: 0 16px;
   height: 44px;
   font-size: 12px;
+  /* Всё тело таблицы — 600 (плотнее воспринимается с тонким Inter Regular).
+     Заголовки (.th) сохраняют 400 — там uppercase + меньший размер. */
+  font-weight: 600;
   color: var(--text-primary);
   vertical-align: middle;
   white-space: nowrap;
@@ -85,11 +88,11 @@
 .row:hover:not(.rowDisabled) > td             { background: rgba(13, 240, 230, 0.04); }
 .row:hover:not(.rowDisabled) > td.tdSelected  { background: rgba(13, 240, 230, 0.08); }
 
-.tdMuted { color: var(--text-muted-50); text-align: right; }
-.tdProfitPos { color: var(--color-accent); font-weight: 500; text-align: right; }
-.tdProfitNeg { color: var(--color-danger);  font-weight: 500; text-align: right; }
+.tdMuted { color: var(--text-muted-70); text-align: right; }
+.tdProfitPos { color: var(--color-accent); text-align: right; }
+.tdProfitNeg { color: var(--color-danger); text-align: right; }
 
-.tdCompanyCell { font-weight: 500; overflow: hidden; }
+.tdCompanyCell { overflow: hidden; }
 .companyName  { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .companyMeta {
   display: flex;
@@ -105,7 +108,6 @@
 }
 .companyNapka {
   font-size: 9px;
-  font-weight: 500;
   flex-shrink: 0;
   line-height: 14px;
 }
@@ -148,7 +150,6 @@
 
 .rankNum {
   font-size: 13px;
-  font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -160,7 +161,7 @@
 .tdExtra {
   text-align: right;
   font-family: var(--font-display);
-  color: var(--text-muted-50);
+  color: var(--text-muted-70);
 }
 
 .pager {
@@ -196,7 +197,7 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: transparent;
-  color: var(--text-muted-50);
+  color: var(--text-muted-70);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;

@@ -4,7 +4,7 @@
   gap: 8px;
   background: none;
   border: none;
-  color: var(--text-muted-50);
+  color: var(--text-muted-70);
   font-size: 13px;
   /* 600 — компенсирует тонкое начертание Inter Regular в нашем self-hosted woff2.
      То же значение что и на nav-кнопках в шапке. */

@@ -42,7 +42,7 @@ button, input, select, textarea {
   --text-muted-30: rgba(255, 255, 255, 0.3);
   --text-muted-40: rgba(255, 255, 255, 0.4);
   --text-muted-45: rgba(255, 255, 255, 0.45);
-  --text-muted-50: rgba(255, 255, 255, 0.5);
+  --text-muted-70: rgba(255, 255, 255, 0.7);
 
   /* Accent */
   --color-accent: #0DF0E6;
