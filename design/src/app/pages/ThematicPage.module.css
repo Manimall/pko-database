@@ -6,6 +6,9 @@
   border: none;
   color: var(--text-muted-50);
   font-size: 13px;
+  /* 600 — компенсирует тонкое начертание Inter Regular в нашем self-hosted woff2.
+     То же значение что и на nav-кнопках в шапке. */
+  font-weight: 600;
   cursor: pointer;
   padding: 20px 0 16px;
   transition: color 0.15s;
