@@ -1,0 +1,203 @@
+.modeRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 16px;
+}
+
+.modeRowMobile {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modeTab {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted-40);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  outline: none;
+  margin-bottom: -1px;
+}
+.modeTab:hover { color: rgba(255, 255, 255, 0.6); }
+.modeTabActive {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.tableWrap { overflow-x: auto; }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  text-align: left;
+  padding: 0 16px;
+  height: 40px;
+  font-size: 10px;
+  color: var(--text-muted-40);
+  font-weight: 400;
+  white-space: nowrap;
+  background: var(--bg-card);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  user-select: none;
+}
+.thRank {
+  width: 44px;
+  font-size: 10px;
+  white-space: normal;
+  line-height: 1.3;
+}
+.thLogo {
+  width: 48px;
+  padding: 0 8px;
+}
+.thSortable {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.thSortable:hover { color: rgba(255, 255, 255, 0.7); }
+
+.thInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.td {
+  padding: 0 16px;
+  height: 44px;
+  font-size: 13px;
+  color: var(--text-muted-70);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.tdLogo {
+  width: 48px;
+  padding: 0 8px;
+}
+.tdRank {
+  color: var(--text-muted-40);
+  font-size: 12px;
+  font-weight: 600;
+  width: 44px;
+}
+.tdName {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 160px;
+}
+.tdBold {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.tdMuted {
+  color: var(--text-muted-40);
+  font-size: 12px;
+}
+.tdWrap {
+  white-space: normal;
+  max-width: 280px;
+}
+
+.row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.row:hover { background: rgba(13, 240, 230, 0.03); }
+.rowDefault { cursor: default; }
+.rowDefault:hover { background: transparent; }
+
+.isinBox {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.isinCode {
+  font-family: monospace;
+  font-size: 12px;
+}
+.isinMaturity {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.statusDotActive { background: #10b981; }
+.statusDotPlacing { background: #f59e0b; }
+
+.ratingBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.typeBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.investType {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.siteLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 13px;
+}
+.siteLink:hover { text-decoration: underline; }
+
+.sitesRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

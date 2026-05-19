@@ -1,0 +1,106 @@
+.header {
+  padding: 16px 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0;
+  z-index: 10;
+  position: relative;
+}
+
+.brandSide {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.logoBox {
+  position: relative;
+  height: 64px;
+}
+.logoBox img {
+  height: 64px;
+  opacity: 0.85;
+  display: block;
+}
+.logoBoxHalf {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  font-size: 11px;
+  /* 600 — компенсирует тонкое начертание Inter Regular в нашем self-hosted woff2.
+     На production шапочные ссылки выглядят насыщеннее за счёт того же приёма. */
+  font-weight: 600;
+  color: var(--text-muted-40);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.navItem:hover {
+  border-color: rgba(13, 240, 230, 0.4);
+  color: var(--color-accent);
+}
+
+.navItemActive {
+  border-color: rgba(13, 240, 230, 0.25);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.navigatorLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.navigatorLink img {
+  height: 96px;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+.navigatorLink:hover img { opacity: 1; }
+
+@media (max-width: 767px) {
+  .header {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .brandSide { justify-content: space-between; gap: 12px; }
+  .logoBox, .logoBox img { height: 40px; }
+  .divider { display: none; }
+  .nav { width: 100%; gap: 6px; }
+  .navItem {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .navigatorLink img { height: 48px; }
+}

@@ -1,0 +1,19 @@
+.root {
+  min-height: 100vh;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-y: auto;
+}
+
+.container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--content-pad-desktop);
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--content-pad-mobile);
+  }
+}

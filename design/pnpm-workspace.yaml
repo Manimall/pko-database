@@ -1,0 +1,5 @@
+# pnpm 11+ moved the `onlyBuiltDependencies` setting here. pnpm 10 still
+# reads it from package.json — both formats are kept so the install works
+# regardless of which pnpm major a contributor has.
+onlyBuiltDependencies:
+  - esbuild

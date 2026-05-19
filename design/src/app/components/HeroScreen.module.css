@@ -1,0 +1,134 @@
+.hero {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.glowTopRight {
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 60%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(0, 185, 177, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glowBottomLeft {
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 50%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(0, 96, 185, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bgImageBox {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 55%;
+  z-index: 1;
+}
+
+.bgImageBox::before,
+.bgImageBox::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.bgImageBox::before {
+  background: linear-gradient(to right, var(--bg-base) 0%, transparent 40%, transparent 80%, var(--bg-base) 100%);
+}
+.bgImageBox::after {
+  background: linear-gradient(to bottom, var(--bg-base) 0%, transparent 10%, transparent 80%, var(--bg-base) 100%);
+}
+
+.bgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.3;
+  filter: grayscale(100%) contrast(1.2) brightness(0.7);
+  display: block;
+}
+
+.main {
+  display: flex;
+  position: relative;
+}
+
+.content {
+  flex: 1;
+  padding: 64px 48px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 10;
+  max-width: 750px;
+}
+
+.title {
+  font-size: clamp(3.5rem, 8vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+  font-family: var(--font-display);
+  color: var(--color-accent);
+  margin-top: 0;
+}
+
+.subtitle {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 32px;
+  line-height: 1.25;
+}
+
+.statsRow {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.statLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: var(--text-muted-30);
+}
+
+.statLabelText {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-display);
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+}
+
+@media (max-width: 767px) {
+  .bgImageBox { width: 100%; opacity: 0.4; }
+  .content    { padding: 32px 16px 40px; }
+  .statsRow   { gap: 24px; }
+}

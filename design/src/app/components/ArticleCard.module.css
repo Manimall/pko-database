@@ -1,0 +1,96 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  /* flex-column убирает baseline-gap, который <button> добавлял сверху первого
+     блочного ребёнка (тот самый чёрный отступ над картинкой Москвы). */
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  width: 100%;
+  line-height: 0; /* убираем half-leading от родительского line-height: 1.5 */
+}
+
+.card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.imageBox {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.imageBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.body {
+  padding: 16px;
+  line-height: 1.5;
+  /* Растянуть body на всю оставшуюся высоту карточки и сделать его flex-
+     контейнером — тогда .cta с margin-top: auto уедет к нижнему краю,
+     даже если summary короткий. */
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--text-muted-30);
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.summary {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted-40);
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-accent);
+  /* Прижать "Читать →" к низу .body независимо от длины summary. */
+  margin-top: auto;
+  align-self: flex-start;
+}
