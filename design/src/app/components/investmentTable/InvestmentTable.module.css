@@ -117,6 +117,13 @@
 .rowDefault { cursor: default; }
 .rowDefault:hover { background: transparent; }
 
+.emptyCell {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--text-muted-40);
+  font-size: 13px;
+}
+
 .isinBox {
   display: flex;
   flex-direction: column;

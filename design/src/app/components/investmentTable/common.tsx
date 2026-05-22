@@ -38,3 +38,13 @@ export function NamedAvatar({ name, resolver }: { name: string; resolver: Invest
 export function rowClassName(canClick: boolean): string {
   return `${s.row} ${canClick ? '' : s.rowDefault}`;
 }
+
+export function EmptySearchRow({ colSpan }: { colSpan: number }) {
+  return (
+    <tr>
+      <td className={s.emptyCell} colSpan={colSpan}>
+        По вашему запросу ничего не найдено
+      </td>
+    </tr>
+  );
+}
