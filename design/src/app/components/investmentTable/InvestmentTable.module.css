@@ -9,6 +9,12 @@
 .modeRowMobile {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modeRowMobile::-webkit-scrollbar {
+  display: none;
 }
 
 .modeTab {
@@ -31,7 +37,15 @@
   border-bottom-color: var(--color-accent);
 }
 
-.tableWrap { overflow-x: auto; }
+.tableWrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tableWrap::-webkit-scrollbar {
+  display: none;
+}
 .table {
   width: 100%;
   border-collapse: collapse;
