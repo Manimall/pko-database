@@ -4,7 +4,10 @@ import { stripOrgForm } from '../../utils/formatCompanyName';
 import { CompanyAvatar } from '../CompanyAvatar';
 import { DeltaCell } from './cells';
 import { Pager } from './Pager';
-import { type Align, type ExtraColumn, cumulativeLeft, fmt } from './helpers';
+import {
+  type ExtraColumn, type MobileLayout,
+  buildMobileLayout, fmt, justify, STICKY_PX,
+} from './helpers';
 import s from './RatingTable.module.css';
 
 interface MobileTableProps {
@@ -18,43 +21,6 @@ interface MobileTableProps {
   totalPages: number;
   setPage: (n: number | ((p: number) => number)) => void;
   totalCompanies: number;
-}
-
-const STICKY_PX = [50, 40, 150]; // [№, Logo, Компания]
-const SCROLL_WIDTHS = ['44px', '130px', '120px', '60px'];
-const SCROLL_HEADERS = ['YoY', 'Выручка + пр. доходы, тыс ₽', 'Чистая прибыль, тыс ₽', 'Стаж, лет'];
-const SCROLL_ALIGNS: Align[] = ['center', 'left', 'right', 'right'];
-
-interface MobileLayout {
-  colWidths: string[];
-  colHeaders: string[];
-  colAligns: Align[];
-  stickyLeft: number[];
-  stickyTotal: number;
-  minWidth: string;
-}
-
-function buildMobileLayout(extraColumns: ExtraColumn[]): MobileLayout {
-  const stickyLeft = cumulativeLeft(STICKY_PX);
-  const stickyTotal = stickyLeft[stickyLeft.length - 1] + STICKY_PX[STICKY_PX.length - 1];
-  const extraHeaders = extraColumns.map(ec => ec.header);
-  const extraWidths = extraColumns.map(() => '100px');
-  const extraAligns = extraColumns.map(() => 'right' as Align);
-
-  return {
-    colWidths: [...STICKY_PX.map(w => `${w}px`), ...SCROLL_WIDTHS, ...extraWidths],
-    colHeaders: ['№', '', 'Компания', ...SCROLL_HEADERS, ...extraHeaders],
-    colAligns: ['center', 'left', 'left', ...SCROLL_ALIGNS, ...extraAligns],
-    stickyLeft,
-    stickyTotal,
-    minWidth: `${stickyTotal + 44 + 130 + 120 + 60 + extraColumns.length * 100}px`,
-  };
-}
-
-function justify(a: Align): CSSProperties['justifyContent'] {
-  if (a === 'center') return 'center';
-  if (a === 'right')  return 'flex-end';
-  return 'flex-start';
 }
 
 function HeaderRow({ layout }: { layout: MobileLayout }) {
@@ -105,12 +71,12 @@ function DataRow({ company, idx, isLast, stickyLeft, extraColumns, onClick }: Da
         <span className={s.rankNum}>{company.rank}</span>
       </td>
       <td className={cellBaseCls} style={stickyTd(1, { padding: '0 4px' })}>
-        <CompanyAvatar name={stripOrgForm(company.name)} rank={company.rank} inn={company.inn} />
+        <CompanyAvatar name={stripOrgForm(company.name)} rank={company.rank} inn={company.inn} size={28} />
       </td>
       <td className={`${cellBaseCls} ${s.tdCompanyCell}`} style={stickyTd(2)}>
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, gap: '1px' }}>
-          <span className={s.companyName} style={{ fontSize: '12px' }}>{stripOrgForm(company.name)}</span>
-          <span className={s.companyCity} style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>
+          <span className={s.companyName} style={{ fontSize: '11.5px' }}>{stripOrgForm(company.name)}</span>
+          <span className={s.companyCity} style={{ fontSize: '9.5px', color: 'rgba(255,255,255,0.4)' }}>
             {company.city || ''}
           </span>
         </div>
@@ -132,7 +98,7 @@ function DataRow({ company, idx, isLast, stickyLeft, extraColumns, onClick }: Da
         <td
           key={ec.key}
           className={`${cellBaseCls} ${s.tdExtra}`}
-          style={{ color: ec.color ? ec.color(company) : undefined }}
+          style={{ color: ec.color ? ec.color(company) : undefined, textAlign: 'center' }}
         >
           {ec.format(company)}
         </td>
@@ -176,7 +142,7 @@ export function MobileTable(props: MobileTableProps) {
       </div>
 
       <div className={s.body} ref={bodyRef} onScroll={handleBodyScroll}>
-        <table className={s.table} style={{ minWidth: layout.minWidth }}>
+        <table className={s.table} style={{ width: layout.minWidth, minWidth: layout.minWidth }}>
           <colgroup>{layout.colWidths.map((w, i) => <col key={i} style={{ width: w }} />)}</colgroup>
           <tbody>
             {companies.map((c, idx) => (
