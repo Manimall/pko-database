@@ -3,14 +3,38 @@
    as inline `style` because they depend on runtime branching (compare mode,
    extra columns). Everything else lives here. */
 
+/* Desktop wrapper: owns --cell-pad / --edge-pad so both <th> and <td>
+   pick up the same value via var(), keeping header/body columns aligned.
+   The mobile layout doesn't use this wrapper and overrides padding via .mTd. */
+.desktopWrap {
+  --cell-pad: 16px;
+  --edge-pad: 32px;
+  --rank-align: left;
+}
+
+@media (min-width: 768px) and (max-width: 1150px) {
+  .desktopWrap {
+    --cell-pad: 10px;
+    --edge-pad: 10px;
+    --rank-align: center;
+  }
+}
+
 .stickyHeader {
   position: sticky;
   top: 56px;
   z-index: 11;
   background: var(--bg-card);
-  overflow-x: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border-bottom: 1px solid var(--border-subtle);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.stickyHeader::-webkit-scrollbar {
+  display: none;
 }
 .stickyHeaderMobile {
   top: 44px;
@@ -23,6 +47,12 @@
 .body {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.body::-webkit-scrollbar {
+  display: none;
 }
 
 .table {
@@ -33,7 +63,7 @@
 
 .th {
   text-align: left;
-  padding: 0 16px;
+  padding: 0 var(--cell-pad, 16px);
   height: 48px;
   font-size: 10px;
   color: var(--text-muted-40);
@@ -61,7 +91,7 @@
 
 .td {
   text-align: left;
-  padding: 0 16px;
+  padding: 0 var(--cell-pad, 16px);
   height: 44px;
   font-size: 12px;
   /* Всё тело таблицы — 600 (плотнее воспринимается с тонким Inter Regular).
@@ -232,16 +262,18 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 0 8px;
+  padding: 0 10px;
+  text-align: center;
 }
 .mobileHeaderLabel {
   font-size: 9px;
   color: var(--text-muted-40);
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   user-select: none;
+  text-wrap: balance;
 }
 
 .pagerMobile { padding: 12px; font-size: 12px; }

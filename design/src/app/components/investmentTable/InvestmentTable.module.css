@@ -9,6 +9,12 @@
 .modeRowMobile {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modeRowMobile::-webkit-scrollbar {
+  display: none;
 }
 
 .modeTab {
@@ -31,7 +37,15 @@
   border-bottom-color: var(--color-accent);
 }
 
-.tableWrap { overflow-x: auto; }
+.tableWrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tableWrap::-webkit-scrollbar {
+  display: none;
+}
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -116,6 +130,13 @@
 .row:hover { background: rgba(13, 240, 230, 0.03); }
 .rowDefault { cursor: default; }
 .rowDefault:hover { background: transparent; }
+
+.emptyCell {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--text-muted-40);
+  font-size: 13px;
+}
 
 .isinBox {
   display: flex;

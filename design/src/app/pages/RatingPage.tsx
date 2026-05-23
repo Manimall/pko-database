@@ -103,7 +103,7 @@ export function RatingPage({ router }: { router: Router }) {
                 extraColumns={extraColumns}
               />
             ) : (
-              <InvestmentTable onCompanyClick={router.goCompany} />
+              <InvestmentTable onCompanyClick={router.goCompany} searchQuery={searchQuery} />
             )}
 
             {preset === 'overview' && (

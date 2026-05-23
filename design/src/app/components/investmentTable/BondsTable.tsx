@@ -4,8 +4,8 @@ import type { Bond } from '../../data/investmentData';
 import { URLS, loadInvestmentBonds } from '../../data/loader';
 import { useAsyncData } from '../../data/useAsyncData';
 import { stripOrgForm } from '../../utils/formatCompanyName';
-import { useInvestmentResolver, type InvestmentResolver } from './helpers';
-import { useMobileSticky, NamedAvatar, rowClassName } from './common';
+import { matchesBondSearch, useInvestmentResolver, type InvestmentResolver } from './helpers';
+import { EmptySearchRow, useMobileSticky, NamedAvatar, rowClassName } from './common';
 import { StatusBadge, RatingBadge } from './badges';
 import s from './InvestmentTable.module.css';
 
@@ -13,6 +13,7 @@ type SortKey = 'pkoRank' | 'company' | 'rating' | 'coupon' | 'volume' | 'status'
 
 interface BondsTableProps {
   onCompanyClick?: (inn: string) => void;
+  searchQuery?: string;
 }
 
 function sortBonds(
@@ -60,7 +61,7 @@ function SortableTh({ sortKey, currentKey, dir, onSort, children, style }: Sorta
   );
 }
 
-export function BondsTable({ onCompanyClick }: BondsTableProps) {
+export function BondsTable({ onCompanyClick, searchQuery = '' }: BondsTableProps) {
   const sticky = useMobileSticky();
   const resolver = useInvestmentResolver();
   const { data } = useAsyncData<Bond[]>(URLS.investmentBonds, loadInvestmentBonds);
@@ -72,7 +73,8 @@ export function BondsTable({ onCompanyClick }: BondsTableProps) {
     else { setSortKey(k); setSortDir('asc'); }
   };
 
-  const sorted = sortBonds(data ?? [], sortKey, sortDir, resolver);
+  const filtered = (data ?? []).filter(row => matchesBondSearch(row, searchQuery));
+  const sorted = sortBonds(filtered, sortKey, sortDir, resolver);
   const thProps = (k: SortKey) => ({ sortKey: k, currentKey: sortKey, dir: sortDir, onSort: handleSort });
 
   return (
@@ -93,6 +95,7 @@ export function BondsTable({ onCompanyClick }: BondsTableProps) {
         </tr>
       </thead>
       <tbody>
+        {sorted.length === 0 && <EmptySearchRow colSpan={9} />}
         {sorted.map((b, idx) => {
           const inn = resolver.getPkoInn(b.company);
           const canClick = !!(onCompanyClick && inn);

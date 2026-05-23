@@ -1,9 +1,10 @@
 import { useCallback, useRef, useState } from 'react';
 import type { RatingCompany } from '../../data/ratingData';
-import { useIsMobile } from '../../shared/hooks/useIsMobile';
+import { useIsMobile, useIsTablet } from '../../shared/hooks/useIsMobile';
 import { DesktopTable } from './DesktopTable';
 import { MobileTable } from './MobileTable';
 import { PAGE_SIZE, type ExtraColumn } from './helpers';
+import { useTableSort } from './useTableSort';
 
 export type { ExtraColumn } from './helpers';
 
@@ -27,19 +28,42 @@ export function RatingTable({
   extraColumns = [],
 }: RatingTableProps) {
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
+  const { sortedCompanies, sortKey: colSortKey, sortDir: colSortDir, handleSort } = useTableSort(companies);
+
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(companies.length / PAGE_SIZE);
-  const pagedCompanies = companies.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const totalPages = Math.ceil(sortedCompanies.length / PAGE_SIZE);
+  const pagedCompanies = sortedCompanies.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   if (page >= totalPages && totalPages > 0) setPage(0);
 
-  // Scroll sync. iOS WebKit drops scrollLeft on overflow:hidden, so the header uses transform.
-  const headerInnerRef = useRef<HTMLDivElement>(null);
+  const desktopHeaderRef = useRef<HTMLDivElement>(null);
+  const mobileHeaderInnerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+
+  // Keep horizontally split headers aligned with the scrollable table body.
+  // iOS WebKit drops scrollLeft on overflow:hidden, so the mobile header still uses transform.
   const handleBodyScroll = useCallback(() => {
-    if (!bodyRef.current) return;
-    const sL = Math.round(bodyRef.current.scrollLeft);
-    if (headerInnerRef.current) {
-      headerInnerRef.current.style.transform = `translate3d(${-sL}px, 0, 0)`;
+    const body = bodyRef.current;
+    if (!body) return;
+
+    const scrollLeft = Math.round(body.scrollLeft);
+    if (mobileHeaderInnerRef.current) {
+      mobileHeaderInnerRef.current.style.transform = `translate3d(${-scrollLeft}px, 0, 0)`;
+    }
+    if (desktopHeaderRef.current && desktopHeaderRef.current.scrollLeft !== scrollLeft) {
+      desktopHeaderRef.current.scrollLeft = scrollLeft;
+    }
+  }, []);
+
+  const handleHeaderScroll = useCallback(() => {
+    const header = desktopHeaderRef.current;
+    const body = bodyRef.current;
+    if (!header || !body) return;
+
+    const scrollLeft = Math.round(header.scrollLeft);
+    if (body.scrollLeft !== scrollLeft) {
+      body.scrollLeft = scrollLeft;
     }
   }, []);
 
@@ -49,13 +73,13 @@ export function RatingTable({
         companies={pagedCompanies}
         onCompanyClick={onCompanyClick}
         extraColumns={extraColumns}
-        headerInnerRef={headerInnerRef}
+        headerInnerRef={mobileHeaderInnerRef}
         bodyRef={bodyRef}
         handleBodyScroll={handleBodyScroll}
         page={page}
         totalPages={totalPages}
         setPage={setPage}
-        totalCompanies={companies.length}
+        totalCompanies={sortedCompanies.length}
       />
     );
   }
@@ -69,12 +93,18 @@ export function RatingTable({
       onToggleSelect={onToggleSelect}
       maxSelected={maxSelected}
       extraColumns={extraColumns}
+      compact={isTablet}
+      sortKey={colSortKey}
+      sortDir={colSortDir}
+      onSort={handleSort}
+      headerRef={desktopHeaderRef}
+      handleHeaderScroll={handleHeaderScroll}
       bodyRef={bodyRef}
       handleBodyScroll={handleBodyScroll}
       page={page}
       totalPages={totalPages}
       setPage={setPage}
-      totalCompanies={companies.length}
+      totalCompanies={sortedCompanies.length}
     />
   );
 }

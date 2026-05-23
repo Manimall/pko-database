@@ -1,12 +1,16 @@
 import type { CSSProperties, RefObject } from 'react';
-import { ArrowUpDown } from 'lucide-react';
 import type { RatingCompany } from '../../data/ratingData';
 import { stripOrgForm } from '../../utils/formatCompanyName';
 import { CompanyAvatar } from '../CompanyAvatar';
-import { DeltaCell, ProfitCell } from './cells';
+import { DeltaCell, ProfitCell, SortIcon } from './cells';
 import { Pager } from './Pager';
-import { type Align, type ExtraColumn, cumulativeLeft, fmt, tdAlignStyle } from './helpers';
+import {
+  type Align, type ExtraColumn, type SortDir, type SortKey,
+  type ColumnLayout, buildLayout, fmt, tdAlignStyle,
+} from './helpers';
 import s from './RatingTable.module.css';
+
+export type { SortKey, SortDir };
 
 interface DesktopTableProps {
   companies: RatingCompany[];
@@ -16,6 +20,12 @@ interface DesktopTableProps {
   onToggleSelect?: (inn: string) => void;
   maxSelected: number;
   extraColumns: ExtraColumn[];
+  compact?: boolean;
+  sortKey?: SortKey | null;
+  sortDir?: SortDir;
+  onSort?: (key: SortKey) => void;
+  headerRef: RefObject<HTMLDivElement>;
+  handleHeaderScroll: () => void;
   bodyRef: RefObject<HTMLDivElement>;
   handleBodyScroll: () => void;
   page: number;
@@ -24,68 +34,51 @@ interface DesktopTableProps {
   totalCompanies: number;
 }
 
-interface ColumnLayout {
-  widths: string[];
-  headers: string[];
-  aligns: Align[];
-  stickyLeft: number[];
-  stickyCount: number;
-  minWidth: string;
-}
-
 function alignFlex(a: Align): string {
   return a === 'right' ? s.thAlignRight : a === 'center' ? s.thAlignCenter : s.thAlignLeft;
 }
 
-function buildLayout(compareMode: boolean, extraColumns: ExtraColumn[]): ColumnLayout {
-  const stickyPx = compareMode ? [40, 56, 48, 36, 180] : [60, 52, 36, 190];
-  const stickyLeft = cumulativeLeft(stickyPx);
-  const stickyTotalPx = stickyLeft[stickyLeft.length - 1] + stickyPx[stickyPx.length - 1];
-
-  const scrollHeaders = [
-    'Выручка + пр. доходы, тыс ₽',
-    'Чистая прибыль, тыс ₽',
-    'Стаж, лет',
-    ...extraColumns.map(ec => ec.header),
-  ];
-  const scrollAligns: Align[] = ['right', 'right', 'right', ...extraColumns.map(() => 'right' as const)];
-  const scrollColWidth = `${(100 / scrollHeaders.length).toFixed(1)}%`;
-
-  const stickyHeaders = compareMode ? ['', '№', 'YoY', '', 'Компания'] : ['№', 'YoY', '', 'Компания'];
-  const stickyAligns: Align[] = compareMode
-    ? ['center', 'left', 'center', 'left', 'left']
-    : ['left', 'center', 'left', 'left'];
-
-  return {
-    widths: [...stickyPx.map(w => `${w}px`), ...scrollHeaders.map(() => scrollColWidth)],
-    headers: [...stickyHeaders, ...scrollHeaders],
-    aligns: [...stickyAligns, ...scrollAligns],
-    stickyLeft,
-    stickyCount: stickyPx.length,
-    minWidth: extraColumns.length > 0
-      ? `${stickyTotalPx + scrollHeaders.length * 150}px`
-      : '830px',
-  };
+interface HeaderRowProps {
+  layout: ColumnLayout;
+  compareMode: boolean;
+  sortKey?: SortKey | null;
+  sortDir?: SortDir;
+  onSort?: (key: SortKey) => void;
 }
 
-function HeaderRow({ layout, compareMode }: { layout: ColumnLayout; compareMode: boolean }) {
+function HeaderRow({ layout, compareMode, sortKey, sortDir = 'desc', onSort }: HeaderRowProps) {
   return (
     <thead>
       <tr>
         {layout.headers.map((h, i) => {
-          const isSticky = i < layout.stickyCount;
+          const isSticky  = i < layout.stickyCount;
+          const isRankCol = h === '№';
+          const colKey    = layout.sortKeys[i];
+          const sortable  = colKey != null;
+          const isActive  = sortable && colKey === sortKey;
+
           const thStyle: CSSProperties = {
             ...tdAlignStyle(layout.aligns[i]),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(isRankCol ? { textAlign: 'var(--rank-align)' as any } : {}),
             ...(h === '' ? { padding: 0 } : {}),
-            ...(i === 0 ? { paddingLeft: compareMode ? '16px' : '32px' } : {}),
-            ...(i === layout.headers.length - 1 ? { paddingRight: '32px' } : {}),
+            ...(i === 0 ? { paddingLeft: compareMode ? 'var(--cell-pad)' : 'var(--edge-pad)' } : {}),
+            ...(i === layout.headers.length - 1 ? { paddingRight: 'var(--edge-pad)' } : {}),
             ...(isSticky ? { position: 'sticky', left: `${layout.stickyLeft[i]}px`, zIndex: 12 } : {}),
+            ...(sortable ? { cursor: 'pointer', userSelect: 'none' } : {}),
           };
+
           return (
-            <th key={i} className={s.th} style={thStyle}>
+            <th
+              key={i}
+              className={s.th}
+              style={thStyle}
+              onClick={sortable && onSort ? () => onSort(colKey) : undefined}
+            >
               {h && (
                 <div className={`${s.thInner} ${alignFlex(layout.aligns[i])}`}>
-                  {h} <ArrowUpDown size={10} color="#d1d5db" />
+                  {h}
+                  <SortIcon isActive={isActive} dir={sortDir} />
                 </div>
               )}
             </th>
@@ -136,7 +129,7 @@ function DataRow({
       onClick={onClick}
     >
       {compareMode && (
-        <td className={cellBaseCls} style={stickyTd(si++, { textAlign: 'center', padding: '0 4px 0 12px' })}>
+        <td className={cellBaseCls} style={stickyTd(si++, { textAlign: 'center', padding: '0 4px 0 var(--cell-pad)' })}>
           <div className={`${s.checkbox} ${isSelected ? s.checkboxActive : ''} ${isDisabled ? s.checkboxDisabled : ''}`}>
             {isSelected && (
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -147,7 +140,11 @@ function DataRow({
         </td>
       )}
 
-      <td className={cellBaseCls} style={stickyTd(si++, { paddingLeft: compareMode ? '12px' : '32px' })}>
+      <td className={cellBaseCls} style={stickyTd(si++, {
+        paddingLeft: compareMode ? 'var(--cell-pad)' : 'var(--edge-pad)',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        textAlign: 'var(--rank-align)' as any,
+      })}>
         <span className={s.rankNum}>{company.rank}</span>
       </td>
 
@@ -171,7 +168,7 @@ function DataRow({
 
       <td className={`${cellBaseCls} ${s.tdMuted}`}>{fmt(company.revenue)}</td>
       <ProfitCell value={company.profit} baseClass={cellBaseCls} />
-      <td className={`${cellBaseCls} ${s.tdMuted}`} style={{ paddingRight: hasExtra ? '16px' : '32px' }}>
+      <td className={`${cellBaseCls} ${s.tdMuted}`} style={{ paddingRight: hasExtra ? 'var(--cell-pad)' : 'var(--edge-pad)' }}>
         {company.experience}
       </td>
 
@@ -181,7 +178,7 @@ function DataRow({
           className={`${cellBaseCls} ${s.tdExtra}`}
           style={{
             color: ec.color ? ec.color(company) : undefined,
-            paddingRight: ecIdx === extraColumns.length - 1 ? '32px' : '16px',
+            paddingRight: ecIdx === extraColumns.length - 1 ? 'var(--edge-pad)' : 'var(--cell-pad)',
           }}
         >
           {ec.format(company)}
@@ -194,10 +191,13 @@ function DataRow({
 export function DesktopTable(props: DesktopTableProps) {
   const {
     companies, onCompanyClick, compareMode, selectedInns, onToggleSelect, maxSelected,
-    extraColumns, bodyRef, handleBodyScroll, page, totalPages, setPage, totalCompanies,
+    extraColumns, compact = false,
+    sortKey, sortDir, onSort,
+    headerRef, handleHeaderScroll, bodyRef, handleBodyScroll,
+    page, totalPages, setPage, totalCompanies,
   } = props;
 
-  const layout = buildLayout(compareMode, extraColumns);
+  const layout = buildLayout(compareMode, extraColumns, compact);
   const hasExtra = extraColumns.length > 0;
 
   const colgroup = (
@@ -205,16 +205,16 @@ export function DesktopTable(props: DesktopTableProps) {
   );
 
   return (
-    <div>
-      <div className={s.stickyHeader}>
-        <table className={s.table} style={{ minWidth: layout.minWidth }}>
+    <div className={s.desktopWrap}>
+      <div className={s.stickyHeader} ref={headerRef} onScroll={handleHeaderScroll}>
+        <table className={s.table} style={compact ? { width: layout.minWidth, minWidth: layout.minWidth } : { minWidth: layout.minWidth }}>
           {colgroup}
-          <HeaderRow layout={layout} compareMode={compareMode} />
+          <HeaderRow layout={layout} compareMode={compareMode} sortKey={sortKey} sortDir={sortDir} onSort={onSort} />
         </table>
       </div>
 
       <div className={s.body} ref={bodyRef} onScroll={handleBodyScroll}>
-        <table className={s.table} style={{ minWidth: layout.minWidth }}>
+        <table className={s.table} style={compact ? { width: layout.minWidth, minWidth: layout.minWidth } : { minWidth: layout.minWidth }}>
           {colgroup}
           <tbody>
             {companies.map((c, idx) => {

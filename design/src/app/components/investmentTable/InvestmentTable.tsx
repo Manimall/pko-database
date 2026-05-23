@@ -38,19 +38,20 @@ function ModeSwitcher({ mode, onChange }: ModeSwitcherProps) {
 
 interface InvestmentTableProps {
   onCompanyClick?: (inn: string) => void;
+  searchQuery?: string;
 }
 
-export function InvestmentTable({ onCompanyClick }: InvestmentTableProps) {
+export function InvestmentTable({ onCompanyClick, searchQuery = '' }: InvestmentTableProps) {
   const [mode, setMode] = useState<InvestMode>('bonds');
 
   return (
     <div>
       <ModeSwitcher mode={mode} onChange={setMode} />
       <div className={s.tableWrap}>
-        {mode === 'bonds'     && <BondsTable     onCompanyClick={onCompanyClick} />}
-        {mode === 'loans'     && <LoansTable     onCompanyClick={onCompanyClick} />}
-        {mode === 'corporate' && <CorporateTable onCompanyClick={onCompanyClick} />}
-        {mode === 'all'       && <AllTable       onCompanyClick={onCompanyClick} />}
+        {mode === 'bonds'     && <BondsTable     onCompanyClick={onCompanyClick} searchQuery={searchQuery} />}
+        {mode === 'loans'     && <LoansTable     onCompanyClick={onCompanyClick} searchQuery={searchQuery} />}
+        {mode === 'corporate' && <CorporateTable onCompanyClick={onCompanyClick} searchQuery={searchQuery} />}
+        {mode === 'all'       && <AllTable       onCompanyClick={onCompanyClick} searchQuery={searchQuery} />}
       </div>
     </div>
   );

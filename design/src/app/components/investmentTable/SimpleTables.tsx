@@ -8,13 +8,20 @@ import {
 } from '../../data/loader';
 import { useAsyncData } from '../../data/useAsyncData';
 import { stripOrgForm } from '../../utils/formatCompanyName';
-import { useInvestmentResolver, type InvestmentResolver } from './helpers';
-import { useMobileSticky, NamedAvatar, rowClassName } from './common';
+import {
+  matchesAllInvestmentSearch,
+  matchesCorporateSearch,
+  matchesLoanSearch,
+  useInvestmentResolver,
+  type InvestmentResolver,
+} from './helpers';
+import { EmptySearchRow, useMobileSticky, NamedAvatar, rowClassName } from './common';
 import { TypeBadge, InvestmentTypeBadge } from './badges';
 import s from './InvestmentTable.module.css';
 
 interface TableProps {
   onCompanyClick?: (inn: string) => void;
+  searchQuery?: string;
 }
 
 function makeCompareByRank(resolver: InvestmentResolver) {
@@ -22,11 +29,14 @@ function makeCompareByRank(resolver: InvestmentResolver) {
     (resolver.getPkoRank(a.company) ?? 999) - (resolver.getPkoRank(b.company) ?? 999);
 }
 
-export function LoansTable({ onCompanyClick }: TableProps) {
+export function LoansTable({ onCompanyClick, searchQuery = '' }: TableProps) {
   const sticky = useMobileSticky();
   const resolver = useInvestmentResolver();
   const { data } = useAsyncData<SiteLoan[]>(URLS.investmentLoans, loadInvestmentLoans);
   const compareByRank = makeCompareByRank(resolver);
+  const rows = (data ?? [])
+    .filter(row => matchesLoanSearch(row, searchQuery))
+    .sort(compareByRank);
 
   return (
     <table className={s.table}>
@@ -40,7 +50,8 @@ export function LoansTable({ onCompanyClick }: TableProps) {
         </tr>
       </thead>
       <tbody>
-        {[...(data ?? [])].sort(compareByRank).map(l => {
+        {rows.length === 0 && <EmptySearchRow colSpan={5} />}
+        {rows.map(l => {
           const inn = resolver.getPkoInn(l.company);
           const canClick = !!(onCompanyClick && inn);
           return (
@@ -78,11 +89,14 @@ export function LoansTable({ onCompanyClick }: TableProps) {
   );
 }
 
-export function CorporateTable({ onCompanyClick }: TableProps) {
+export function CorporateTable({ onCompanyClick, searchQuery = '' }: TableProps) {
   const sticky = useMobileSticky();
   const resolver = useInvestmentResolver();
   const { data } = useAsyncData<Corporate[]>(URLS.investmentCorporates, loadInvestmentCorporates);
   const compareByRank = makeCompareByRank(resolver);
+  const rows = (data ?? [])
+    .filter(row => matchesCorporateSearch(row, searchQuery))
+    .sort(compareByRank);
 
   return (
     <table className={s.table}>
@@ -97,7 +111,8 @@ export function CorporateTable({ onCompanyClick }: TableProps) {
         </tr>
       </thead>
       <tbody>
-        {[...(data ?? [])].sort(compareByRank).map(c => {
+        {rows.length === 0 && <EmptySearchRow colSpan={6} />}
+        {rows.map(c => {
           const inn = resolver.getPkoInn(c.company);
           const canClick = !!(onCompanyClick && inn);
           return (
@@ -120,11 +135,14 @@ export function CorporateTable({ onCompanyClick }: TableProps) {
   );
 }
 
-export function AllTable({ onCompanyClick }: TableProps) {
+export function AllTable({ onCompanyClick, searchQuery = '' }: TableProps) {
   const sticky = useMobileSticky();
   const resolver = useInvestmentResolver();
   const { data } = useAsyncData<AllInvestment[]>(URLS.investmentAll, loadInvestmentAll);
   const compareByRank = makeCompareByRank(resolver);
+  const rows = (data ?? [])
+    .filter(row => matchesAllInvestmentSearch(row, searchQuery))
+    .sort(compareByRank);
 
   return (
     <table className={s.table}>
@@ -139,7 +157,8 @@ export function AllTable({ onCompanyClick }: TableProps) {
         </tr>
       </thead>
       <tbody>
-        {[...(data ?? [])].sort(compareByRank).map(r => {
+        {rows.length === 0 && <EmptySearchRow colSpan={6} />}
+        {rows.map(r => {
           const inn = resolver.getPkoInn(r.company);
           const canClick = !!(onCompanyClick && inn);
           return (

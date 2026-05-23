@@ -20,14 +20,14 @@
 - **Corepack** (входит в Node 16+) — управляет версией pnpm автоматически.
 - **cwebp** (`brew install webp`) — только если будешь пересобирать логотипы.
 
-Версия pnpm пиннится через поле `"packageManager": "pnpm@10.6.5"` в `package.json` — corepack сам подхватит правильную версию при первой команде.
+Версия pnpm пиннится через поле `"packageManager": "pnpm@10.6.5"` в корневом `package.json` и в `design/package.json` — corepack сам подхватит правильную версию при первой команде.
 
 ### Первый запуск с нуля
 
 ```bash
 # 1. Клонировать
 git clone git@github.com:Manimall/pko-database.git
-cd pko-database/design
+cd pko-database
 
 # 2. (Если node не той версии) — поставить через nvm
 nvm install 20.19.4
@@ -36,7 +36,8 @@ nvm use 20.19.4
 # 3. Включить corepack (один раз для системы; --force нужно только если ругается на shim'ы)
 corepack enable --install-directory ~/.local/bin 2>/dev/null || corepack enable
 
-# 4. Поставить зависимости (corepack автоматически возьмёт pnpm@10.6.5 из package.json)
+# 4. Поставить зависимости (corepack автоматически возьмёт pnpm@10.6.5)
+# Корневой postinstall поставит зависимости фронтенда в design/
 pnpm install
 
 # 5. Запустить dev-сервер — откроется http://localhost:5173/
@@ -49,9 +50,11 @@ pnpm dev
 pnpm dev          # dev-сервер (HMR, http://localhost:5173)
 pnpm build        # прод-сборка в design/dist
 pnpm preview      # локальный предпросмотр прод-сборки
-pnpm test         # все 95 unit-тестов, ~3 сек
+pnpm test         # все 102 unit-теста
 pnpm test:watch   # watch-режим
 ```
+
+Команды можно запускать из корня репозитория. Если ты уже находишься в `design/`, те же `pnpm dev`, `pnpm build`, `pnpm test` тоже работают напрямую.
 
 ### Если pnpm выдаёт ошибку про esbuild build scripts
 
@@ -67,7 +70,7 @@ pnpm approve-builds   # один раз, выбрать esbuild → 'a' для a
 
 ### Если установлен pnpm@11+ и ругается на Node < 22.13
 
-Поле `packageManager` в `package.json` заставит corepack использовать pnpm 10.6.5 (работает с Node 20.19+). Если этого не произошло, выполни:
+Поле `packageManager` в корневом `package.json` заставит corepack использовать pnpm 10.6.5 (работает с Node 20.19+). Если этого не произошло, выполни:
 
 ```bash
 corepack prepare pnpm@10.6.5 --activate
